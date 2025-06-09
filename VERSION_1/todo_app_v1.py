@@ -30,10 +30,31 @@ class Todo:
         todo.created_at = datetime.strptime(data['created_at'], '%Y-%m-%d %H:%M:%S')
         return todo
 
+#class TodoApp:
+   # def __init__(self, file_path: str):
+    #    self.file_path = file_path
+     #   self.todos = {}
+
+
 class TodoApp:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-        self.todos = {}
+    def __init__(self):
+        self.todos = load_todos()
+
+    def add_todo(self, title, description, due_date):
+        if not title.strip():
+            raise ValueError("Title cannot be empty")
+        self.todos.append(Todo(title, description, due_date))
+        save_todos(self.todos)
+
+    def complete_todo(self, index):
+        if 0 <= index < len(self.todos):
+            self.todos[index].completed = True
+            save_todos(self.todos)
+        else:
+            raise ValueError("Invalid index")
+
+    def list_todos(self):
+        return self.todos.copy()
 
 
 def save_todos(todos, filename='todos.json'):
