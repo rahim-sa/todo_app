@@ -12,6 +12,23 @@ class Todo:
         self.is_complete = False
         self.created_at = datetime.now()
 
+
+    def to_dict(self):
+        return {
+            'title': self.title,
+            'description': self.description,
+            'due_date': self.due_date,
+            'completed': self.completed,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        todo = cls(data['title'], data['description'], data['due_date'])
+        todo.completed = data['completed']
+        todo.created_at = datetime.strptime(data['created_at'], '%Y-%m-%d %H:%M:%S')
+        return todo
+
 class TodoApp:
     def __init__(self, file_path: str):
         self.file_path = file_path
