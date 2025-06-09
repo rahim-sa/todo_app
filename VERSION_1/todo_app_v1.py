@@ -85,6 +85,53 @@ class TodoApp:
 
     # Add complete_todo(), delete_todo(), list_todos() similarly...
 
+def display_todos(todos):
+    print("\nYour TODOs:")
+    for i, todo in enumerate(todos):
+        status = "✓" if todo.completed else " "
+        print(f"{i}. [{status}] {todo.title} (Due: {todo.due_date})")
+        print(f"   {todo.description}\n")
+
+def main():
+    app = TodoApp()
+    while True:
+        print("\nTODO App Menu:")
+        print("1. Add TODO")
+        print("2. Complete TODO")
+        print("3. List TODOs")
+        print("4. Exit")
+        
+        choice = input("Choose option (1-4): ")
+        
+        try:
+            if choice == '1':
+                title = input("Title: ")
+                description = input("Description: ")
+                due_date = input("Due date (YYYY-MM-DD): ")
+                app.add_todo(title, description, due_date)
+                print("TODO added!")
+            
+            elif choice == '2':
+                display_todos(app.list_todos())
+                index = int(input("Enter TODO number to complete: "))
+                app.complete_todo(index)
+                print("Marked as complete!")
+            
+            elif choice == '3':
+                display_todos(app.list_todos())
+            
+            elif choice == '4':
+                print("Goodbye!")
+                break
+            
+            else:
+                print("Invalid choice")
+        
+        except ValueError as e:
+            print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
 
 ##### Required Functions
 #1. TODO Management
