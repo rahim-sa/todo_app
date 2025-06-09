@@ -2,6 +2,7 @@ import time
 import json
 from datetime import date
 from datetime import datetime
+import os
 
 
 class Todo:
@@ -33,6 +34,35 @@ class TodoApp:
     def __init__(self, file_path: str):
         self.file_path = file_path
         self.todos = {}
+
+
+def save_todos(todos, filename='todos.json'):
+    with open(filename, 'w') as f:
+        json.dump([todo.to_dict() for todo in todos], f)
+
+def load_todos(filename='todos.json'):
+    if not os.path.exists(filename):
+        return []
+    try:
+        with open(filename, 'r') as f:
+            return [Todo.from_dict(todo) for todo in json.load(f)]
+    except json.JSONDecodeError:
+        return []
+
+
+from storage import load_todos, save_todos
+
+class TodoApp:
+    def __init__(self):
+        self.todos = load_todos()
+
+    def add_todo(self, title, description, due_date):
+        if not title.strip():
+            raise ValueError("Title cannot be empty")
+        self.todos.append(Todo(title, description, due_date))
+        save_todos(self.todos)
+
+    # Add complete_todo(), delete_todo(), list_todos() similarly...
 
 
 ##### Required Functions
