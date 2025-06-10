@@ -1,5 +1,25 @@
+# File: todo_app/models/__init__.py
+# Empty file to mark package
+
+# File: todo_app/views/__init__.py
+# Empty file
+
+# File: todo_app/main.py
+from controllers.todo_controller import TodoController
+from models.todo_model import TodoModel
+from views.todo_view import TodoView
+
 def main():
-    print("Hello from todo-app-v2!")
+    model = TodoModel()
+    view = TodoView()
+    controller = TodoController(model, view)
+    controller.run()
+
+
+
+
+
+ 
 
 
 if __name__ == "__main__":
