@@ -7,3 +7,4 @@ class TodoView:
     @staticmethod
     def get_input(prompt: str) -> str:
         return input(prompt).strip()
+    print(f"Due: {todo.due_date} {'(Overdue!)' if todo.is_overdue else ''}")
