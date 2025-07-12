@@ -5,12 +5,13 @@
 # Empty file
 
 # File: todo_app/main.py
-from controllers.todo_controller import TodoController
-from models.todo_model import TodoModel
+from src.controllers.todo_controller import TodoController
+from src.models.todo_model import TodoModel
 from views.todo_view import TodoView
 
 def main():
-    model = TodoModel()
+
+    #model = TodoModel()
     view = TodoView()
     controller = TodoController(model, view)
     controller.run()
