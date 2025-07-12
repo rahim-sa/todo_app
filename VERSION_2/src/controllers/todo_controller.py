@@ -10,7 +10,7 @@ class TodoController:
         self.model = model
         self.view = view
 
-<<<<<<< HEAD
+ 
     def run(self) -> None:
         while True:
             self.view.show_menu()
