@@ -1,3 +1,4 @@
+ 
 # version_2/src/views/todo_view.py
 from datetime import date
 from typing import Optional, Dict
@@ -23,3 +24,4 @@ class TodoView:
     @staticmethod
     def show_error(message: str) -> None:
         print(f"Error: {message}")
+ 
