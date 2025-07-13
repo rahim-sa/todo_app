@@ -2,6 +2,8 @@
 from src.models.todo_model import TodoModel, Todo
 from src.views.todo_view import TodoView
 from typing import Optional
+import logging
+from src.exceptions import TodoError
 
 
 class TodoController:
@@ -64,3 +66,28 @@ class TodoController:
     def _list_todos(self) -> None:
 
         self.view.show_todos(self.model.todos)
+
+ 
+import logging
+from src.exceptions import TodoError
+
+class TodoController:
+    def __init__(self, model: TodoModel, view: TodoView):
+        self.model = model
+        self.view = view
+        logging.basicConfig(
+            filename='todo_app.log',
+            level=logging.ERROR,
+            format='%(asctime)s - %(levelname)s - %(message)s'
+        )
+
+    def run(self):
+        try:
+            self._run_app()
+        except TodoError as e:
+            self.view.show_error(f"Application error: {str(e)}")
+            logging.error(f"Application error: {str(e)}")
+        except Exception as e:
+            self.view.show_error("An unexpected error occurred")
+            logging.critical(f"Unexpected error: {str(e)}", exc_info=True)
+            raise
