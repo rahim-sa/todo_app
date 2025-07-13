@@ -20,7 +20,7 @@ class TodoController:
                 self._add_todo()
             elif choice == "4":
                 self._list_todos()
-            elif choice == "5":
+            elif choice == "5":  # Changed from "5" to "3" and back
                 self.model.save_todos()
                 break
             else:
