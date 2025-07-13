@@ -62,10 +62,8 @@ class TodoView:
 
     @staticmethod
     def show_success(message: str) -> None:
-<<<<<<< HEAD
-        print(f"Success: {message}")
-=======
-        """Display success messages"""
+ 
+        #Display success messages"""
         print(f"Success: {message}")
 
     
@@ -89,4 +87,4 @@ class TodoView:
         return {"title": title, "description": desc, "due_date": due_date}
 
     
->>>>>>> feature/data-validation
+ 

@@ -62,24 +62,5 @@ class TodoController:
             self.view.show_error(str(e))
 
     def _list_todos(self) -> None:
-<<<<<<< HEAD
-        self.view.show_todos(self.model.todos)
-=======
-    #Display all todos using the view
-            self.view.show_todos(self.model.todos)
 
- 
-    def _add_todo(self) -> None:
-        try:
-            data = self.view.get_todo_input()
-            new_todo = Todo(**data)
-            todo_id = str(len(self.model.todos)+1)
-            self.model.todos[todo_id] = new_todo
-            self.view.show_success(f"Todo added with ID: {todo_id}")
-        except ValueError as e:
-            self.view.show_error(f"Validation error: {str(e)}")
-        except Exception as e:
-            self.view.show_error(f"Unexpected error: {str(e)}")
-            # Log the full error for debugging
-            logging.error(f"Error adding todo: {str(e)}", exc_info=True)
->>>>>>> feature/data-validation
+        self.view.show_todos(self.model.todos)
