@@ -55,3 +55,23 @@ class TodoView:
         print(f"Success: {message}")
 
     
+     
+    @staticmethod
+    def get_todo_input() -> Dict:
+        title = input("Title: ").strip()
+        if not title:
+            raise ValueError("Title cannot be empty")
+        
+        desc = input("Description (optional): ").strip()
+        due = input(f"Due date ({date.today()}): ").strip() or str(date.today())
+        
+        try:
+            due_date = date.fromisoformat(due)
+            if due_date < date.today():
+                raise ValueError("Due date cannot be in the past")
+        except ValueError:
+            raise ValueError("Invalid date format. Use YYYY-MM-DD")
+        
+        return {"title": title, "description": desc, "due_date": due_date}
+
+    
