@@ -1,8 +1,9 @@
  
 # version_2/src/views/todo_view.py
-from datetime import date
-from typing import Optional, Dict
+from datetime import date, datetime
+from typing import Dict, Optional
 from src.models.todo_model import Todo
+
 
 class TodoView:
     @staticmethod
@@ -24,4 +25,33 @@ class TodoView:
     @staticmethod
     def show_error(message: str) -> None:
         print(f"Error: {message}")
- 
+
+    @staticmethod
+    def show_todos(todos: Dict[str, Todo]) -> None:
+        """Display all todos with their details"""
+        if not todos:
+            print("\nNo todos found")
+            return
+            
+        print("\n=== Todos ===")
+        for todo_id, todo in todos.items():
+            status = "✓" if todo.is_complete else "✗"
+            overdue = " (overdue)" if todo.is_overdue else ""
+            print(f"\n{todo_id}. [{status}] {todo.title}{overdue}")
+            print(f"   Due: {todo.due_date}")
+            print(f"   Created: {todo.created_at.strftime('%Y-%m-%d %H:%M')}")
+            if todo.updated_at:
+                print(f"   Updated: {todo.updated_at.strftime('%Y-%m-%d %H:%M')}")
+            if todo.description:
+                print(f"   Description: {todo.description}")
+        
+        print(f"\nTotal todos: {len(todos)}")
+        print(f"Completed: {sum(1 for t in todos.values() if t.is_complete)}")
+        print(f"Overdue: {sum(1 for t in todos.values() if t.is_overdue)}")
+
+    @staticmethod
+    def show_success(message: str) -> None:
+        """Display success messages"""
+        print(f"Success: {message}")
+
+    
