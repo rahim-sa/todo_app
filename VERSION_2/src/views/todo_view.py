@@ -40,21 +40,28 @@ class TodoView:
             raise ValueError("ID cannot be empty")
         return todo_id
 
+    # In todo_view.py
     @staticmethod
     def show_todos(todos: Dict[str, Todo]) -> None:
         if not todos:
-            print("No todos found")
+            print("\nNo todos found")
             return
             
         print("\n=== Todos ===")
         for todo_id, todo in todos.items():
             status = "✓" if todo.is_complete else "✗"
-            overdue = " (overdue)" if todo.is_overdue else ""
-            print(f"{todo_id}. [{status}] {todo.title}{overdue}")
-            print(f"   Due: {todo.due_date}, Created: {todo.created_at}")
+            overdue = " (overdue!)" if todo.is_overdue else ""
+            print(f"\n{todo_id}. [{status}] {todo.title}{overdue}")
+            print(f"   Due: {todo.due_date}")
+            print(f"   Created: {todo.created_at.strftime('%Y-%m-%d %H:%M')}")
+            if todo.updated_at:
+                print(f"   Updated: {todo.updated_at.strftime('%Y-%m-%d %H:%M')}")
             if todo.description:
                 print(f"   Description: {todo.description}")
-            print()
+        
+        print(f"\nTotal todos: {len(todos)}")
+        print(f"Completed: {sum(1 for t in todos.values() if t.is_complete)}")
+        print(f"Overdue: {sum(1 for t in todos.values() if t.is_overdue)}")
 
     @staticmethod
     def show_error(message: str) -> None:
