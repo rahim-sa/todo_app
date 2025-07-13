@@ -33,3 +33,7 @@ class TodoController:
             self.model.todos[str(len(self.model.todos)+1)] = new_todo
         except ValueError as e:
             self.view.show_error(str(e))
+
+    def _list_todos(self) -> None:
+    #Display all todos using the view
+            self.view.show_todos(self.model.todos)
