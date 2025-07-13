@@ -6,6 +6,13 @@ import json
 from pathlib import Path
 
 
+try:
+    from src.exceptions import PersistenceError
+except ImportError:
+    class PersistenceError(Exception):
+        """Fallback if exceptions.py doesn't exist"""
+        pass
+
 @dataclass
 class Todo:
     title: str
