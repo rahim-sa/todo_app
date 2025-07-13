@@ -18,6 +18,14 @@ class Todo:
     def is_overdue(self) -> bool:
         return self.due_date < date.today() and not self.is_complete
 
+    def __post_init__(self):
+        """Validate todo data on initialization"""
+        if not isinstance(self.title, str) or not self.title.strip():
+            raise ValueError("Title must be a non-empty string")
+        if self.due_date < date.today():
+            raise ValueError("Due date cannot be in the past")
+        if not isinstance(self.description, str):
+            raise ValueError("Description must be a string")
 class TodoModel:
     def __init__(self, file_path: str = "todos.json"):
         self.file_path = file_path
