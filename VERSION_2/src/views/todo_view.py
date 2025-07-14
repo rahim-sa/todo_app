@@ -1,4 +1,9 @@
 # version_2/src/views/todo_view.py
+"""
+View: Handles all user input/output.
+Separates UI concerns from business logic.
+"""
+
 from datetime import date
 from typing import Optional, Dict, Any
 from src.models.todo_model import Todo
@@ -7,6 +12,7 @@ from src.models.todo_model import Todo
 class TodoView:
     @staticmethod
     def show_menu() -> None:
+        # Display main menu options
         print("\n=== Todo Manager ===")
         print("1. Add Todo")
         print("2. Complete Todo")
@@ -16,6 +22,7 @@ class TodoView:
 
     @staticmethod
     def get_todo_input() -> Dict[str, Any]:
+        # Collect validated todo data from user
         title = input("Title: ").strip()
         if not title:
             raise ValueError("Title cannot be empty")
@@ -35,6 +42,7 @@ class TodoView:
 
     @staticmethod
     def get_todo_id() -> str:
+        # Collect validated id from user
         todo_id = input("Enter Todo ID: ").strip()
         if not todo_id:
             raise ValueError("ID cannot be empty")
@@ -43,6 +51,7 @@ class TodoView:
     # In todo_view.py
     @staticmethod
     def show_todos(todos: Dict[str, Todo]) -> None:
+        # Shows available todo tasks
         if not todos:
             print("\nNo todos found")
             return

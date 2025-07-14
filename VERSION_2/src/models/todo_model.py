@@ -1,4 +1,9 @@
 # version_2/src/models/todo_model.py
+"""
+Data model: Handles storage and business logic.
+Uses JSON for persistence.
+"""
+
 from dataclasses import dataclass, field
 from datetime import datetime, date
 from typing import Dict, List
@@ -15,15 +20,17 @@ except ImportError:
 
 @dataclass
 class Todo:
-    title: str
-    description: str = ""
-    due_date: date = date.today()
-    is_complete: bool = False
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = None
+    # Dataclass representing a single todo item
+    title: str              # Required task name        
+    description: str = ""   # Optional details
+    due_date: date = date.today() # Default: today
+    is_complete: bool = False   # Completion status
+    created_at: datetime = field(default_factory=datetime.now)  # Auto-timestamp
+    updated_at: datetime = None  # Set when modified
 
     @property
     def is_overdue(self) -> bool:
+        #Check if incomplete todo is past due
         return self.due_date < date.today() and not self.is_complete
 
     def __post_init__(self):
@@ -37,11 +44,14 @@ class Todo:
             raise ValueError("Description must be a string")
  
 class TodoModel:
+    # Manages todo collection and JSON persistence
     def __init__(self, file_path: str = "todos.json"):
+        # Initialize with JSON storage path
         self.file_path = Path(file_path)
         self.todos: Dict[str, Todo] = self._load_todos()
 
     def _load_todos(self) -> Dict[str, Todo]:
+        # Load todos from JSON file or return empty dict if not found
         try:
             if not self.file_path.exists():
                 return {}
@@ -65,6 +75,7 @@ class TodoModel:
             return {}
 
     def save_todos(self):
+        # Save todos to JSON with atomic write
         try:
             with open(self.file_path, 'w', encoding='utf-8') as f:
                 data = {
@@ -85,6 +96,7 @@ class TodoModel:
 
     @property
     def completed_todos(self) -> List[Todo]:
+        # Get all completed todos (read-only property)
         return [t for t in self.todos.values() if t.is_complete]
     
 
@@ -114,5 +126,5 @@ def _load_todos(self) -> Dict[str, Todo]:
     
 def __init__(self, file_path: str = "todos.json"):
     self.file_path = file_path
-    print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")  # Add this line
+    print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")   
     self.todos = self._load_todos()
