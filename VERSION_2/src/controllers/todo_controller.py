@@ -46,18 +46,17 @@ class TodoController:
             self.view.show_error("An unexpected error occurred")
             logging.critical(f"Unexpected error: {str(e)}", exc_info=True)
 
-    def _add_todo(self) -> None:
+    def _add_todo(self):
         try:
             data = self.view.get_todo_input()
             new_todo = Todo(**data)
             todo_id = str(len(self.model.todos) + 1)
             self.model.todos[todo_id] = new_todo
-            self.view.show_success(f"Todo added with ID: {todo_id}")
-        except ValueError as e:
-            self.view.show_error(f"Validation error: {str(e)}")
+            self.model.save_todos()  # Explicit save after add
+            print(f"DEBUG: Added todo ID {todo_id}")  # Verify addition
         except Exception as e:
-            self.view.show_error("Failed to add todo")
-            logging.error(f"Add todo error: {str(e)}", exc_info=True)
+            self.view.show_error(str(e))
+            logging.exception("Add todo failed")
 
     def _complete_todo(self) -> None:
         try:
@@ -74,19 +73,18 @@ class TodoController:
             self.view.show_error("Failed to complete todo")
             logging.error(f"Complete todo error: {str(e)}", exc_info=True)
 
-    def _delete_todo(self) -> None:
+    def _delete_todo(self):
         try:
             todo_id = self.view.get_todo_id()
             if todo_id in self.model.todos:
                 del self.model.todos[todo_id]
+                self.model.save_todos()   
                 self.view.show_success(f"Todo {todo_id} deleted")
             else:
                 self.view.show_error("Todo not found")
-        except ValueError as e:
-            self.view.show_error(str(e))
         except Exception as e:
-            self.view.show_error("Failed to delete todo")
-            logging.error(f"Delete todo error: {str(e)}", exc_info=True)
+            self.view.show_error(f"Delete failed: {str(e)}")
+            logging.error(f"Delete error: {str(e)}")
 
     def _list_todos(self) -> None:
         try:

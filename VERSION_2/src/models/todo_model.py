@@ -64,20 +64,24 @@ class TodoModel:
             print(f"Warning: Could not load todos: {e}")
             return {}
 
-    def save_todos(self) -> None:
+    def save_todos(self):
         try:
-            # Ensure directory exists
-            self.file_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            with open(self.file_path, 'w') as f:
-                json.dump(
-                    {k: vars(v) for k, v in self.todos.items()}, 
-                    f, 
-                    default=str,
-                    indent=2
-                )
-        except (IOError, TypeError) as e:
-            raise RuntimeError(f"Failed to save todos: {e}")
+            with open(self.file_path, 'w', encoding='utf-8') as f:
+                data = {
+                    k: {
+                        'title': v.title,
+                        'description': v.description,
+                        'due_date': v.due_date.isoformat(),
+                        'is_complete': v.is_complete,
+                        'created_at': v.created_at.isoformat(),
+                        'updated_at': v.updated_at.isoformat() if v.updated_at else None
+                    } 
+                    for k, v in self.todos.items()
+                }
+                json.dump(data, f, indent=2)
+            print(f"DEBUG: Saved {len(self.todos)} todos")  # Verify saving
+        except Exception as e:
+            print(f"ERROR saving todos: {str(e)}")  # Debug failures
 
     @property
     def completed_todos(self) -> List[Todo]:
@@ -107,3 +111,8 @@ def _load_todos(self) -> Dict[str, Todo]:
             return todos
     except Exception as e:
         raise PersistenceError(f"Failed to load todos: {str(e)}")
+    
+def __init__(self, file_path: str = "todos.json"):
+    self.file_path = file_path
+    print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")  # Add this line
+    self.todos = self._load_todos()
