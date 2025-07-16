@@ -1,12 +1,13 @@
 from unittest.mock import patch
-import pytest
+from src.views.todo_view import TodoView
 
-class TestTodoView:
-    @patch('builtins.input', side_effect=['Test', '', '2023-12-31'])
+def test_show_menu(capsys):
+    TodoView.show_menu()
+    captured = capsys.readouterr()
+    assert "Todo Manager" in captured.out
 
-    def test_get_todo_input(self, mock_input):
-        from src.views.todo_view import TodoView
-        view = TodoView()
-        result = view.get_todo_input()
-        assert result['title'] == 'Test'
-        assert result['due_date'].year == 2023
+@patch('builtins.input', side_effect=['Test', '', '2023-12-31'])
+def test_get_todo_input(mock_input):
+    data = TodoView.get_todo_input()
+    assert data['title'] == "Test"
+    assert data['due_date'].year == 2023
