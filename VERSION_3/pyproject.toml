@@ -1,14 +1,9 @@
 [project]
-name = "version-3"
+name = "todo-app-v2"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "rahim-sa", email = "sadighi.rahim@gmail.com" }
-]
 requires-python = ">=3.11"
-dependencies = []
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+dependencies = [
+    "pytest>=8.4.1",
+]
