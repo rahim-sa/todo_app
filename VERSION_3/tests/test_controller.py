@@ -1,24 +1,45 @@
+import sys
+from pathlib import Path
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from datetime import date
+
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+#sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from unittest.mock import MagicMock, patch   
+
+from src.views.todo_view import TodoView
+from src.models.todo_model import TodoModel
 from src.controllers.todo_controller import TodoController
 
-def test_add_todo_flow():
-    mock_model = MagicMock()
-    mock_view = MagicMock()
-    
-    # Return a date object, not a string
-    mock_view.get_todo_input.return_value = {
-        'title': 'New Task',
-        'description': '',
-        'due_date': date(2099, 12, 31)  # Actual date object
-    }
+def test_add_todo_success(real_controller):
+    """Test successful todo addition with real components"""
+    with patch('builtins.input', side_effect=['Test Task', '', '2099-12-31']):
+        real_controller._add_todo()
+        
+        # Verify by checking actual model state
+        assert len(real_controller.model.todos) == 1
+        todo = list(real_controller.model.todos.values())[0]
+        assert todo.title == "Test Task"
+        assert todo.due_date == date(2099, 12, 31)
 
-    # Bypass the validation that's causing issues
-    with patch('src.models.todo_model.Todo.__post_init__', return_value=None):
-        controller = TodoController(mock_model, mock_view)
-        controller._add_todo()
+def test_complete_todo_success(real_controller):
+    """Test completion with real components"""
+    # Add a test todo
+    test_todo = MagicMock()
+    test_todo.is_complete = False
+    real_controller.model.todos = {"1": test_todo}
     
-    # Verify the call happened
-    mock_model.todos.__setitem__.assert_called_once()
-    mock_model.save_todos.assert_called_once()
+    with patch('builtins.input', return_value="1"):
+        real_controller._complete_todo()
+        assert test_todo.is_complete is True
+
+def test_delete_todo_success(real_controller):
+    """Test deletion with real components"""
+    real_controller.model.todos = {"1": MagicMock()}
+    
+    with patch('builtins.input', return_value="1"):
+        real_controller._delete_todo()
+        assert "1" not in real_controller.model.todos

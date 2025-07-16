@@ -6,7 +6,14 @@ import sys
 sys.path.append(str(Path(__file__).parent.parent))
 from src.models.todo_model import Todo, TodoModel
 
-sys.path.append(str(Path(__file__).parent.parent))
+from src.views.todo_view import TodoView  # Add this
+from src.controllers.todo_controller import TodoController
+
+#sys.path.append(str(Path(__file__).parent.parent))
+
+from src.views.todo_view import TodoView
+from src.models.todo_model import TodoModel
+from src.controllers.todo_controller import TodoController
 
 @pytest.fixture
 def sample_todo():
@@ -22,3 +29,11 @@ def empty_model(tmp_path):
     yield model
     if Path(tmp_path / "test_todos.json").exists():
         Path(tmp_path / "test_todos.json").unlink()
+
+
+@pytest.fixture
+def real_controller(tmp_path):
+    """Controller with real components using test data"""
+    model = TodoModel(tmp_path / "test_todos.json")
+    view = TodoView()
+    return TodoController(model, view)
