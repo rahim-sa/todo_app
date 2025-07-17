@@ -66,12 +66,15 @@ class TodoController:
             self.model.todos[todo_id] = new_todo
             self.model.save_todos()
         except ValueError as e:
-            self.view.show_error(str(e))
-            raise  # Re-raise for tests
-        except Exception as e:  # Catch storage errors
-            self.view.show_error("Failed to save todo")
-            logging.error(f"Storage error: {str(e)}")
-            raise TodoError("Storage failed") from e  # This is the key line
+            error_msg = str(e)
+            self.view.show_error(error_msg)
+            logging.error(error_msg)  # Add this line to log the error
+            raise
+        except Exception as e:
+            error_msg = str(e)
+            self.view.show_error("An unexpected error occurred")
+            logging.error(error_msg)
+            raise TodoError(error_msg) from e
     
     
     

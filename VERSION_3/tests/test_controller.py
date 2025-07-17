@@ -6,6 +6,8 @@ from datetime import date
 import logging
 
 
+
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 #sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -133,7 +135,7 @@ def test_complete_already_done(real_controller):
 def test_save_todos_failure(real_controller, monkeypatch):
     """Test storage failure during save"""
     def mock_fail(*args, **kwargs):
-        raise Exception("Mocked storage failure")
+        raise Exception("Storage failed")  # Match expected message
     
     monkeypatch.setattr(real_controller.model, 'save_todos', mock_fail)
     with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
@@ -164,13 +166,24 @@ def test_complete_todo_updates_timestamp(real_controller):
     assert test_todo.updated_at is not None  # Timestamp updated
 
 #def test_error_logging(real_controller, caplog):
-    #"""Verify errors are logged"""
+   # """Verify errors are logged"""
    # with patch('builtins.input', side_effect=['', '', '']):  # Empty title
-    #    with pytest.raises(ValueError):
-     #       real_controller._add_todo()
+       # with pytest.raises(ValueError):
+      #      real_controller._add_todo()
     #assert "Title cannot be empty" in caplog.text
 
 
+
+def test_error_logging(real_controller, caplog):
+    """Verify errors are logged"""
+    caplog.set_level(logging.ERROR)
+    
+    with patch('builtins.input', side_effect=['', '', '']):
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+    
+    # Verify both stdout and logs
+    assert "Title cannot be empty" in caplog.text
 
 #def test_todo_id_generation(real_controller):
    # """Test auto-incrementing IDs"""
