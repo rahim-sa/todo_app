@@ -20,3 +20,22 @@ Traceback (most recent call last):
   File "D:\dev\maktab\todo_app\version_2\src\views\todo_view.py", line 92, in get_todo_input
     raise ValueError("Invalid date format. Use YYYY-MM-DD")
 ValueError: Invalid date format. Use YYYY-MM-DD
+2025-07-17 17:01:13,434 - ERROR - Invalid date format. Use YYYY-MM-DD
+2025-07-17 17:01:13,434 - CRITICAL - Unexpected error: Invalid date format. Use YYYY-MM-DD
+Traceback (most recent call last):
+  File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 97, in get_todo_input
+    due_date = date.fromisoformat(due)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Invalid isoformat string: '2025-09-2'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\maktab\todo_app\version_3\src\controllers\todo_controller.py", line 63, in run
+    self._add_todo()
+  File "D:\dev\maktab\todo_app\version_3\src\controllers\todo_controller.py", line 88, in _add_todo
+    data = self.view.get_todo_input()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 101, in get_todo_input
+    raise ValueError("Invalid date format. Use YYYY-MM-DD")
+ValueError: Invalid date format. Use YYYY-MM-DD

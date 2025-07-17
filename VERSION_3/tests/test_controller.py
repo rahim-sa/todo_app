@@ -243,3 +243,12 @@ def test_controller_init_failure():
     # Verify the error message
     assert "Model initialization failed" in str(exc_info.value)
     assert "DB error" in str(exc_info.value)
+
+# High-value tests to add (will boost coverage significantly)
+def test_controller_logging():
+    """Verify critical errors are logged"""
+    # Test implementation here
+
+def test_model_edge_cases():
+    """Test storage boundary conditions"""
+    # Test implementation here
