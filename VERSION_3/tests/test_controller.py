@@ -291,3 +291,27 @@ def test_controller_run_invalid_choice(real_controller):
         real_controller.run()
         mock_error.assert_called_once_with("Invalid choice")
         assert mock_input.call_count == 2 
+
+def test_error_logging(real_controller, caplog):
+    """Verify errors are logged"""
+    caplog.set_level(logging.ERROR)
+    with patch('builtins.input', side_effect=['', '', '']):  # Empty title
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+    assert "Title cannot be empty" in caplog.text
+
+def test_complete_updates_timestamp(real_controller):
+    """Verify completion updates timestamp"""
+    test_todo = MagicMock(is_complete=False, updated_at=None)
+    real_controller.model.todos = {"1": test_todo}
+    with patch('builtins.input', return_value="1"):
+        real_controller._complete_todo()
+    assert test_todo.updated_at is not None
+
+def test_list_todos_format(real_controller, sample_todo, capsys):
+    """Verify todo listing format"""
+    real_controller.model.todos = {"1": sample_todo}
+    real_controller._list_todos()
+    captured = capsys.readouterr()
+    assert "1. [✗] Test Todo" in captured.out
+    assert "Due: 2099-12-31" in captured.out
