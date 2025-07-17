@@ -4,8 +4,10 @@ from pathlib import Path
 import json
 from unittest.mock import call
 
- 
+#from unittest.mock import call
 from unittest.mock import patch, MagicMock
+from pathlib import Path 
+#from unittest.mock import patch, MagicMock
 import logging
  
 
@@ -113,3 +115,20 @@ def test_controller_run_invalid_choice(real_controller):
          patch.object(real_controller.view, 'show_error') as mock_error:
         real_controller.run()
         mock_error.assert_called_with("Invalid choice")
+
+
+ 
+    
+def test_load_corrupt_data(tmp_path, capsys):
+    """Test handling of corrupt JSON files"""
+    # Create corrupt file
+    bad_file = tmp_path / "bad.json"
+    bad_file.write_text("{invalid}")
+    
+    # Test loading
+    model = TodoModel(bad_file)
+    captured = capsys.readouterr()
+    
+    # Verify behavior
+    assert model.todos == {}  # Should return empty dict
+    assert "Warning: Could not load todos" in captured.out  # Verify warning was printed

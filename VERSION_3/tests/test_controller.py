@@ -315,3 +315,22 @@ def test_list_todos_format(real_controller, sample_todo, capsys):
     captured = capsys.readouterr()
     assert "1. [✗] Test Todo" in captured.out
     assert "Due: 2099-12-31" in captured.out
+
+
+def test_save_failure_handling(real_controller, monkeypatch, capsys):
+    """Test storage failure recovery"""
+    # Setup
+    def mock_fail(*args, **kwargs):
+        raise PersistenceError("Save failed")
+    
+    # Apply mock
+    monkeypatch.setattr(real_controller.model, 'save_todos', mock_fail)
+    
+    # Test with valid input that should trigger save
+    with patch('builtins.input', side_effect=['Valid', '', '2099-12-31']):
+        with pytest.raises(TodoError) as exc_info:
+            real_controller._add_todo()
+        
+        # Verify error handling
+        assert "Save failed" in str(exc_info.value)
+        assert "Error:" in capsys.readouterr().out  # Verify user saw error
