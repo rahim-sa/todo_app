@@ -107,3 +107,51 @@ def test_add_todo_bad_date_format(real_controller):
     with patch('builtins.input', side_effect=['Test', '', '31-01-2000']):
         with pytest.raises(ValueError):
             real_controller._add_todo()
+
+# Test 1: Complete non-existent todo
+def test_complete_invalid_id(real_controller):
+    with patch('builtins.input', return_value="999"):  # Invalid ID
+        with pytest.raises(ValueError):
+            real_controller._complete_todo()
+
+# Test 2: Complete already-completed todo
+def test_complete_already_done(real_controller):
+    mock_todo = MagicMock(is_complete=True)  # Already completed
+    real_controller.model.todos = {"1": mock_todo}
+    with patch('builtins.input', return_value="1"):
+        real_controller._complete_todo()
+    assert mock_todo.is_complete  # Still True
+
+
+def test_save_todos_failure(real_controller, monkeypatch):
+    """Test storage failure during save"""
+    def mock_fail(*args, **kwargs):
+        raise Exception("Save failed")
+    
+    monkeypatch.setattr(real_controller.model, 'save_todos', mock_fail)
+    with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
+        with pytest.raises(Exception):
+            real_controller._add_todo()
+
+def test_load_todos_failure(tmp_path):
+    """Test corrupt data loading"""
+    bad_file = tmp_path / "bad.json"
+    bad_file.write_text("{invalid_json}")
+    model = TodoModel(bad_file)
+    assert model.todos == {}  # Should handle corrupt file
+
+
+def test_list_empty_todos(real_controller, capsys):
+    """Test listing empty todo list"""
+    real_controller.model.todos = {}
+    real_controller._list_todos()
+    captured = capsys.readouterr()
+    assert "No todos found" in captured.out
+
+def test_complete_todo_updates_timestamp(real_controller):
+    """Test completion updates timestamp"""
+    test_todo = MagicMock(is_complete=False, updated_at=None)
+    real_controller.model.todos = {"1": test_todo}
+    with patch('builtins.input', return_value="1"):
+        real_controller._complete_todo()
+    assert test_todo.updated_at is not None  # Timestamp updated
