@@ -89,3 +89,21 @@ def test_delete_todo_success(real_controller):
     with patch('builtins.input', return_value="1"):
         real_controller._delete_todo()
         assert "1" not in real_controller.model.todos
+
+# Test 1: Empty title
+def test_add_todo_empty_title(real_controller):
+    with patch('builtins.input', side_effect=['', '', '2099-12-31']):  # Empty title
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+
+# Test 2: Invalid date (past date)
+def test_add_todo_past_date(real_controller):
+    with patch('builtins.input', side_effect=['Test', '', '2000-01-01']):
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+
+# Test 3: Invalid date format (not YYYY-MM-DD)
+def test_add_todo_bad_date_format(real_controller):
+    with patch('builtins.input', side_effect=['Test', '', '31-01-2000']):
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
