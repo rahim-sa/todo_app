@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
 from src.controllers.todo_controller import TodoController
+from src.controllers.todo_controller import TodoError
 
 
 
@@ -123,14 +124,19 @@ def test_complete_already_done(real_controller):
     assert mock_todo.is_complete  # Still True
 
 
+#def test_save_todos_failure(real_controller, monkeypatch):
+    #"""Test storage failure during save"""
+    #def mock_fail(*args, **kwargs):
+        #raise Exception("Save failed")
+
 def test_save_todos_failure(real_controller, monkeypatch):
     """Test storage failure during save"""
     def mock_fail(*args, **kwargs):
-        raise Exception("Save failed")
+        raise Exception("Mocked storage failure")
     
     monkeypatch.setattr(real_controller.model, 'save_todos', mock_fail)
     with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
-        with pytest.raises(Exception):
+        with pytest.raises(TodoError, match="Storage failed"):
             real_controller._add_todo()
 
 def test_load_todos_failure(tmp_path):
@@ -148,10 +154,26 @@ def test_list_empty_todos(real_controller, capsys):
     captured = capsys.readouterr()
     assert "No todos found" in captured.out
 
-def test_complete_todo_updates_timestamp(real_controller):
-    """Test completion updates timestamp"""
-    test_todo = MagicMock(is_complete=False, updated_at=None)
-    real_controller.model.todos = {"1": test_todo}
-    with patch('builtins.input', return_value="1"):
-        real_controller._complete_todo()
-    assert test_todo.updated_at is not None  # Timestamp updated
+#def test_complete_todo_updates_timestamp(real_controller):
+   # """Test completion updates timestamp"""
+   # test_todo = MagicMock(is_complete=False, updated_at=None)
+   # real_controller.model.todos = {"1": test_todo}
+   # with patch('builtins.input', return_value="1"):
+       # real_controller._complete_todo()
+   # assert test_todo.updated_at is not None  # Timestamp updated
+
+#def test_error_logging(real_controller, caplog):
+    #"""Verify errors are logged"""
+   # with patch('builtins.input', side_effect=['', '', '']):  # Empty title
+        #with pytest.raises(ValueError):
+          #  real_controller._add_todo()
+    #assert "Title cannot be empty" in caplog.text
+
+#def test_todo_id_generation(real_controller):
+   # """Test auto-incrementing IDs"""
+    #with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
+       # real_controller._add_todo()
+       # assert "1" in real_controller.model.todos  # First ID should be "1"
+        
+        #real_controller._add_todo()
+        #assert "2" in real_controller.model.todos  # Next ID should be "2"

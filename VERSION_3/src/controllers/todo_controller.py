@@ -57,19 +57,26 @@ class TodoController:
     # Create new todo from user input
      
 
+    
     def _add_todo(self):
         try:
-            data = self.view.get_todo_input()  # View validates first
-            new_todo = Todo(**data)  # Model validates again
+            data = self.view.get_todo_input()
+            new_todo = Todo(**data)
             todo_id = str(len(self.model.todos) + 1)
             self.model.todos[todo_id] = new_todo
             self.model.save_todos()
-        except ValueError as e:  # Catch specific validation errors
+        except ValueError as e:
             self.view.show_error(str(e))
             raise  # Re-raise for tests
-        except Exception as e:
-            self.view.show_error(str(e))
-            logging.exception("Add todo failed")
+        except Exception as e:  # Catch storage errors
+            self.view.show_error("Failed to save todo")
+            logging.error(f"Storage error: {str(e)}")
+            raise TodoError("Storage failed") from e  # This is the key line
+    
+    
+    
+    
+    
 
     # Completes the selected todo 
     #def _complete_todo(self) -> None:
