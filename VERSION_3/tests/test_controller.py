@@ -154,13 +154,13 @@ def test_list_empty_todos(real_controller, capsys):
     captured = capsys.readouterr()
     assert "No todos found" in captured.out
 
-#def test_complete_todo_updates_timestamp(real_controller):
-   # """Test completion updates timestamp"""
-   # test_todo = MagicMock(is_complete=False, updated_at=None)
-   # real_controller.model.todos = {"1": test_todo}
-   # with patch('builtins.input', return_value="1"):
-       # real_controller._complete_todo()
-   # assert test_todo.updated_at is not None  # Timestamp updated
+def test_complete_todo_updates_timestamp(real_controller):
+    """Test completion updates timestamp"""
+    test_todo = MagicMock(is_complete=False, updated_at=None)
+    real_controller.model.todos = {"1": test_todo}
+    with patch('builtins.input', return_value="1"):
+        real_controller._complete_todo()
+    assert test_todo.updated_at is not None  # Timestamp updated
 
 #def test_error_logging(real_controller, caplog):
     #"""Verify errors are logged"""
