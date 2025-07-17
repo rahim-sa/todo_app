@@ -36,7 +36,10 @@ def test_complete_nonexistent_todo(real_controller):
 
 
 
-
+def test_add_todo_empty_title(real_controller):
+    with patch('builtins.input', side_effect=['', '', '']):
+        with pytest.raises(ValueError, match="Title cannot be empty"):
+            real_controller._add_todo()
 
 #def test_add_todo_success(real_controller):
    # """Test successful todo addition with real components"""
