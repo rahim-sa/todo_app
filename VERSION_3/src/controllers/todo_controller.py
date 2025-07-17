@@ -72,6 +72,21 @@ class TodoController:
             logging.exception("Add todo failed")
 
     # Completes the selected todo 
+    #def _complete_todo(self) -> None:
+      #  try:
+       #     todo_id = self.view.get_todo_id()
+         #   if todo_id in self.model.todos:
+          #      self.model.todos[todo_id].is_complete = True
+          #      self.model.todos[todo_id].updated_at = datetime.now()
+          #      self.view.show_success(f"Todo {todo_id} marked as complete")
+           # else:
+          #      self.view.show_error("Todo not found")
+       # except ValueError as e:
+           # self.view.show_error(str(e))
+        #except Exception as e:
+            #self.view.show_error("Failed to complete todo")
+           # logging.error(f"Complete todo error: {str(e)}", exc_info=True)
+
     def _complete_todo(self) -> None:
         try:
             todo_id = self.view.get_todo_id()
@@ -80,9 +95,10 @@ class TodoController:
                 self.model.todos[todo_id].updated_at = datetime.now()
                 self.view.show_success(f"Todo {todo_id} marked as complete")
             else:
-                self.view.show_error("Todo not found")
+                raise ValueError("Todo not found")  # Add this line
         except ValueError as e:
             self.view.show_error(str(e))
+            raise  # Re-raise after showing
         except Exception as e:
             self.view.show_error("Failed to complete todo")
             logging.error(f"Complete todo error: {str(e)}", exc_info=True)
