@@ -5,18 +5,21 @@ from unittest.mock import patch
 from datetime import date
 import logging
 
-
+from src.exceptions import PersistenceError  # Add with other imports
+from unittest.mock import MagicMock 
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 #sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from unittest.mock import MagicMock, patch   
+#from unittest.mock import MagicMock, patch   
 
 from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
 from src.controllers.todo_controller import TodoController
 from src.controllers.todo_controller import TodoError
+from src.exceptions import PersistenceError   
+
 
 
 
@@ -209,3 +212,34 @@ def test_todo_id_generation(real_controller):
         # Second addition 
         real_controller._add_todo()
         assert "2" in real_controller.model.todos
+
+#def test_load_todos_failure(real_controller, monkeypatch):
+   # """Test handling of corrupt data file"""
+   # def mock_fail():
+   #     raise PersistenceError("Corrupt data")
+  #  monkeypatch.setattr(real_controller.model, '_load_todos', mock_fail)
+  #  with pytest.raises(TodoError):
+   #     real_controller.run()  # Should handle init failure
+
+#def test_controller_init_failure(tmp_path):
+   # """Test handling of model initialization failure"""
+   # with patch('src.models.todo_model.TodoModel._load_todos', side_effect=PersistenceError("DB error")):
+   #     with pytest.raises(TodoError):
+      #      model = TodoModel(tmp_path / "test.json")
+       #     view = TodoView()
+       #     _ = TodoController(model, view)
+
+def test_controller_init_failure():
+    """Test controller handles model initialization failure"""
+    # Create a mock model that will fail initialization
+    bad_model = MagicMock(spec=TodoModel)
+    bad_model._load_todos.side_effect = PersistenceError("DB error")
+    del bad_model.todos  # Force the initialization check to fail
+    
+    # Test that controller converts the error
+    with pytest.raises(TodoError) as exc_info:
+        TodoController(bad_model, MagicMock(spec=TodoView))
+    
+    # Verify the error message
+    assert "Model initialization failed" in str(exc_info.value)
+    assert "DB error" in str(exc_info.value)
