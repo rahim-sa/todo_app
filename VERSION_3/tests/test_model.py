@@ -1,10 +1,19 @@
 import pytest
 import sys
 from pathlib import Path
+import json
+from unittest.mock import call
+
+ 
+from unittest.mock import patch, MagicMock
+import logging
+ 
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 #sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.models.todo_model import Todo
+from src.exceptions import PersistenceError
 
 from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
@@ -59,3 +68,48 @@ def test_completed_todos_property(empty_model, sample_todo):
     }
     assert len(empty_model.completed_todos) == 1
     assert empty_model.completed_todos[0].title == "Test Todo"
+
+
+
+ 
+
+def test_model_save_empty(tmp_path):
+    """Test saving empty todo list"""
+    model = TodoModel(tmp_path / "empty.json")
+    model.todos = {}  # Explicitly set empty
+    model.save_todos()
+    
+    # Verify file was created with empty JSON
+    assert (tmp_path / "empty.json").exists()
+    assert json.loads((tmp_path / "empty.json").read_text()) == {}
+
+
+def test_controller_run_exit(real_controller, monkeypatch):
+    """Test clean exit behavior"""
+    # Setup
+    exit_called = False
+    original_save = real_controller.model.save_todos
+    
+    def mock_save():
+        nonlocal exit_called
+        exit_called = True
+        original_save()
+    
+    # Mock the inputs and save method
+    input_values = ["5"]  # Exit command
+    monkeypatch.setattr('builtins.input', lambda _: input_values.pop(0))
+    monkeypatch.setattr(real_controller.model, 'save_todos', mock_save)
+    
+    # Execute
+    real_controller.run()
+    
+    # Verify
+    assert exit_called, "Save should be called before exit"
+
+    
+def test_controller_run_invalid_choice(real_controller):
+    """Test handling of invalid menu choices"""
+    with patch('builtins.input', side_effect=["99", "5"]), \
+         patch.object(real_controller.view, 'show_error') as mock_error:
+        real_controller.run()
+        mock_error.assert_called_with("Invalid choice")

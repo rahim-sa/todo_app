@@ -1,12 +1,13 @@
 import sys
 from pathlib import Path
 import pytest
-from unittest.mock import patch
 from datetime import date
 import logging
-
-from src.exceptions import PersistenceError  # Add with other imports
-from unittest.mock import MagicMock 
+import json
+from unittest.mock import call
+from unittest.mock import patch, MagicMock
+from pathlib import Path
+#from unittest.mock import MagicMock 
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -18,7 +19,10 @@ from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
 from src.controllers.todo_controller import TodoController
 from src.controllers.todo_controller import TodoError
-from src.exceptions import PersistenceError   
+from src.exceptions import PersistenceError 
+ 
+
+ 
 
 
 
@@ -245,10 +249,45 @@ def test_controller_init_failure():
     assert "DB error" in str(exc_info.value)
 
 # High-value tests to add (will boost coverage significantly)
-def test_controller_logging():
-    """Verify critical errors are logged"""
+#def test_controller_logging():
+   # """Verify critical errors are logged"""
     # Test implementation here
 
-def test_model_edge_cases():
-    """Test storage boundary conditions"""
+#def test_model_edge_cases():
+   # """Test storage boundary conditions"""
     # Test implementation here
+
+
+def test_controller_logging_on_error(real_controller, caplog):
+    """Verify errors are properly logged"""
+    caplog.set_level(logging.ERROR)
+    with patch('builtins.input', side_effect=['', '', '']):  # Invalid input
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+    assert any("Title cannot be empty" in record.message 
+              for record in caplog.records)
+
+#def test_controller_run_exit(real_controller):
+  #  """Test clean exit"""
+   # with patch('builtins.input', return_value="5"):  # Exit command
+     #   with pytest.raises(SystemExit):
+        #    real_controller.run()
+
+ 
+
+
+def test_controller_run_exit(real_controller):
+    """Test clean exit behavior"""
+    with patch('builtins.input', return_value="5"), \
+         patch.object(real_controller.model, 'save_todos') as mock_save:
+        real_controller.run()
+        mock_save.assert_called_once()  # Verify save was called before exit    
+
+
+def test_controller_run_invalid_choice(real_controller):
+    """Test handling of invalid menu choices"""
+    with patch('builtins.input', side_effect=["99", "5"]) as mock_input, \
+         patch.object(real_controller.view, 'show_error') as mock_error:
+        real_controller.run()
+        mock_error.assert_called_once_with("Invalid choice")
+        assert mock_input.call_count == 2 
