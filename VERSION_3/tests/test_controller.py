@@ -25,6 +25,19 @@ def test_add_todo_success(real_controller):
         assert todo.title == "Test Task"
         assert todo.due_date == date(2099, 12, 31)
 
+def test_add_todo_invalid_date(real_controller):
+    """Test past due date rejection"""
+    with patch('builtins.input', side_effect=['Test', '', '2000-01-01']):
+        with pytest.raises(ValueError, match="Invalid date format"):
+            real_controller._add_todo()
+
+ 
+#def test_complete_nonexistent_todo(real_controller):
+   # """Test invalid ID handling"""
+  #  with patch('builtins.input', return_value="999"):
+    #    with pytest.raises(ValueError):
+     #       real_controller._complete_todo()
+
 def test_complete_todo_success(real_controller):
     """Test completion with real components"""
     # Add a test todo

@@ -55,18 +55,18 @@ class TodoController:
             logging.critical(f"Unexpected error: {str(e)}", exc_info=True)
 
     # Create new todo from user input
+     
+
     def _add_todo(self):
         try:
-            # Get validated input from view
-            data = self.view.get_todo_input()
-            # Create Todo dataclass instance
-            new_todo = Todo(**data)
-            # Generate incremental ID
+            data = self.view.get_todo_input()  # View validates first
+            new_todo = Todo(**data)  # Model validates again
             todo_id = str(len(self.model.todos) + 1)
-            # Add to in-memory storage
             self.model.todos[todo_id] = new_todo
-            self.model.save_todos()  # Explicit save after add
-            print(f"DEBUG: Added todo ID {todo_id}")  # Verify addition
+            self.model.save_todos()
+        except ValueError as e:  # Catch specific validation errors
+            self.view.show_error(str(e))
+            raise  # Re-raise for tests
         except Exception as e:
             self.view.show_error(str(e))
             logging.exception("Add todo failed")
