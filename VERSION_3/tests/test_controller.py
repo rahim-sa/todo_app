@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from unittest.mock import patch
 from datetime import date
+import logging
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -165,15 +166,33 @@ def test_complete_todo_updates_timestamp(real_controller):
 #def test_error_logging(real_controller, caplog):
     #"""Verify errors are logged"""
    # with patch('builtins.input', side_effect=['', '', '']):  # Empty title
-        #with pytest.raises(ValueError):
-          #  real_controller._add_todo()
+    #    with pytest.raises(ValueError):
+     #       real_controller._add_todo()
     #assert "Title cannot be empty" in caplog.text
+
+
 
 #def test_todo_id_generation(real_controller):
    # """Test auto-incrementing IDs"""
-    #with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
-       # real_controller._add_todo()
-       # assert "1" in real_controller.model.todos  # First ID should be "1"
+   # with patch('builtins.input', side_effect=['Test', '', '2099-12-31']):
+      #  real_controller._add_todo()
+      #  assert "1" in real_controller.model.todos  # First ID should be "1"
         
-        #real_controller._add_todo()
-        #assert "2" in real_controller.model.todos  # Next ID should be "2"
+       # real_controller._add_todo()
+       # assert "2" in real_controller.model.todos  # Next ID should be "2"
+
+def test_todo_id_generation(real_controller):
+    """Test auto-incrementing IDs"""
+    # Setup - clear existing todos and mock save
+    real_controller.model.todos = {}
+    with patch.object(real_controller.model, 'save_todos'), \
+         patch('builtins.input', side_effect=['Test', '', '2099-12-31', 
+                                             'Test2', '', '2099-12-31']):
+        
+        # First addition
+        real_controller._add_todo()
+        assert "1" in real_controller.model.todos
+        
+        # Second addition 
+        real_controller._add_todo()
+        assert "2" in real_controller.model.todos
