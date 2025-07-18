@@ -254,3 +254,19 @@ def test_model_with_custom_filepath(tmp_path):
     model = TodoModel(test_file)
     assert model.file_path == test_file
     assert model.todos == {}
+
+
+###  new test
+
+# Add to tests/test_model.py
+def test_todo_with_empty_description():
+    """Test Todo allows empty description"""
+    from datetime import date
+    todo = Todo(title="Valid", description="", due_date=date(2099,1,1))
+    assert todo.description == ""
+
+def test_model_save_empty(tmp_path):
+    """Test saving empty todo list"""
+    model = TodoModel(tmp_path / "empty.json")
+    model.save_todos()  # Should not crash
+    assert (tmp_path / "empty.json").exists()
