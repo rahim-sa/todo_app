@@ -50,49 +50,6 @@ class TodoModel:
         self.file_path = Path(file_path)
         self.todos: Dict[str, Todo] = self._load_todos()
 
-    # def _load_todos(self) -> Dict[str, Todo]:
-    #     # Load todos from JSON file or return empty dict if not found
-    #     try:
-    #         if not self.file_path.exists():
-    #             return {}
-                
-    #         with open(self.file_path) as f:
-    #             data = json.load(f)
-    #             todos = {}
-    #             for k, v in data.items():
-    #                 try:
-    #                     # Convert string dates back to date/datetime objects
-    #                     v['due_date'] = date.fromisoformat(v['due_date'])
-    #                     v['created_at'] = datetime.fromisoformat(v['created_at'])
-    #                     if v['updated_at']:
-    #                         v['updated_at'] = datetime.fromisoformat(v['updated_at'])
-    #                     todos[k] = Todo(**v)
-    #                 except (ValueError, KeyError) as e:
-    #                     print(f"Warning: Skipping invalid todo {k}: {e}")
-    #             return todos
-    #     except (FileNotFoundError, json.JSONDecodeError) as e:
-    #         print(f"Warning: Could not load todos: {e}")
-    #         return {}
-
-    # def _load_todos(self) -> Dict[str, Todo]:
-    #     if not self.file_path.exists():
-    #         return {}
-
-    #     with open(self.file_path) as f:
-    #         data = json.load(f)
-    #         todos = {}
-    #         for id, todo_data in data.items():
-    #             try:
-    #                 # Convert string date to date object
-    #                 todo_data['due_date'] = date.fromisoformat(todo_data['due_date'])
-    #                 # Ensure description exists
-    #                 todo_data.setdefault('description', '')
-    #                 todos[id] = Todo(**todo_data)
-    #             except (ValueError, KeyError, TypeError) as e:
-    #                 continue
-    #         return todos
-
-
     def _load_todos(self) -> Dict[str, Todo]:
         try:
             if not self.file_path.exists():
@@ -146,32 +103,31 @@ class TodoModel:
         # Get all completed todos (read-only property)
         return [t for t in self.todos.values() if t.is_complete]
     
-
  
-def _load_todos(self) -> Dict[str, Todo]:
-    try:
-        if not self.file_path.exists():
-            return {}
+# def _load_todos(self) -> Dict[str, Todo]:
+#     try:
+#         if not self.file_path.exists():
+#             return {}
             
-        with open(self.file_path) as f:
-            data = json.load(f)
-            todos = {}
-            for k, v in data.items():
-                try:
-                    # Skip invalid entries but keep loading others
-                    v['due_date'] = date.fromisoformat(v['due_date'])
-                    v['created_at'] = datetime.fromisoformat(v['created_at'])
-                    if v['updated_at']:
-                        v['updated_at'] = datetime.fromisoformat(v['updated_at'])
-                    todos[k] = Todo(**v)
-                except (ValueError, KeyError) as e:
-                    print(f"Warning: Skipping invalid todo {k}: {e}")
-                    continue
-            return todos
-    except Exception as e:
-        raise PersistenceError(f"Failed to load todos: {str(e)}")
+#         with open(self.file_path) as f:
+#             data = json.load(f)
+#             todos = {}
+#             for k, v in data.items():
+#                 try:
+#                     # Skip invalid entries but keep loading others
+#                     v['due_date'] = date.fromisoformat(v['due_date'])
+#                     v['created_at'] = datetime.fromisoformat(v['created_at'])
+#                     if v['updated_at']:
+#                         v['updated_at'] = datetime.fromisoformat(v['updated_at'])
+#                     todos[k] = Todo(**v)
+#                 except (ValueError, KeyError) as e:
+#                     print(f"Warning: Skipping invalid todo {k}: {e}")
+#                     continue
+#             return todos
+#     except Exception as e:
+#         raise PersistenceError(f"Failed to load todos: {str(e)}")
     
-def __init__(self, file_path: str = "todos.json"):
-    self.file_path = file_path
-    print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")   
-    self.todos = self._load_todos()
+# def __init__(self, file_path: str = "todos.json"):
+#     self.file_path = file_path
+#     print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")   
+#     self.todos = self._load_todos()

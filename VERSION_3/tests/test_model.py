@@ -38,28 +38,6 @@ def test_load_invalid_data(tmp_path):
     model = TodoModel(bad_file)
     assert model.todos == {}  # Should handle corrupt files
 
-#def test_save_empty_todos(empty_model, tmp_path):
- #   """Test saving empty todo list"""
-  #  empty_model.file_path = tmp_path / "empty.json"
-   # empty_model.save_todos()
-    #assert empty_model.file_path.exists()
-
-# Add to test_model.py
-
-#def test_save_empty_todos(empty_model, tmp_path):
-  #  """Test saving empty todo list"""
-  #  test_file = tmp_path / "empty.json"
-  #  empty_model.file_path = test_file
-  #  empty_model.save_todos()
-  #  assert test_file.exists()
-  #  assert test_file.read_text() == '{}'  # Verify empty dict saved
-
-#def test_completed_todos_property(empty_model, sample_todo):
-   # """Test completed_todos property"""
-   # sample_todo.is_complete = True
-   # empty_model.todos = {"1": sample_todo, "2": MagicMock(is_complete=False)}
-   # assert len(empty_model.completed_todos) == 1
-   # assert empty_model.completed_todos[0].title == "Test Todo"
 
 def test_completed_todos_property(empty_model, sample_todo):
     """Test completed_todos property"""
@@ -72,9 +50,6 @@ def test_completed_todos_property(empty_model, sample_todo):
     assert len(empty_model.completed_todos) == 1
     assert empty_model.completed_todos[0].title == "Test Todo"
 
-
-
- 
 
 def test_model_save_empty(tmp_path):
     """Test saving empty todo list"""
@@ -117,8 +92,6 @@ def test_controller_run_invalid_choice(real_controller):
         real_controller.run()
         mock_error.assert_called_with("Invalid choice")
 
-
- 
     
 def test_load_corrupt_data(tmp_path, capsys):
     """Test handling of corrupt JSON files"""
@@ -134,70 +107,6 @@ def test_load_corrupt_data(tmp_path, capsys):
     assert model.todos == {}  # Should return empty dict
     assert "Warning: Could not load todos" in captured.out  # Verify warning was printed
 
-
-# def test_save_todos(tmp_path, sample_todo):  
-#     model = TodoModel(tmp_path / "test.json")  
-#     model.todos = {"1": sample_todo}  
-#     model.save_todos()  
-#     assert (tmp_path / "test.json").exists()  
-
-# def test_load_corrupt_data(tmp_path):  
-#     bad_file = tmp_path / "bad.json"  
-#     bad_file.write_text("{invalid_json}")  
-#     model = TodoModel(bad_file)  
-#     assert model.todos == {}  # Should recover gracefully  
-
-# def test_todo_with_empty_description():  
-#     todo = Todo(title="Valid", description="", due_date=date(2099, 1, 1))  
-#     assert todo.description == ""  # Should allow empty desc  
-
-
-
-# Add to existing tests
-# def test_save_todos_with_special_chars(tmp_path):
-#     """Test saving todos with special characters"""
-#     model = TodoModel(tmp_path / "special.json")
-#     model.todos = {
-#         "1": Todo(title="Task & Stuff", description="Line\nBreak", due_date=date(2099,1,1))
-#     }
-#     model.save_todos()
-    
-#     # Verify roundtrip
-#     new_model = TodoModel(tmp_path / "special.json")
-#     assert new_model.todos["1"].title == "Task & Stuff"
-#     assert new_model.todos["1"].description == "Line\nBreak"
-
-# def test_load_todos_with_invalid_entries(tmp_path, capsys):
-#     """Test loading with some invalid entries"""
-#     test_file = tmp_path / "mixed.json"
-#     test_file.write_text("""{
-#         "1": {"title": "Valid", "due_date": "2099-01-01"},
-#         "2": {"title": 123, "due_date": "2099-01-01"},
-#         "3": {"title": "Valid2", "due_date": "invalid-date"}
-#     }""")
-    
-#     model = TodoModel(test_file)
-#     assert len(model.todos) == 1  # Only valid entry loaded
-#     assert "Skipping invalid todo" in capsys.readouterr().out
-
-# def test_load_single_valid_todo(tmp_path):
-#     """Simplest possible load test - won't break anything"""
-#     # 1. Setup
-#     test_file = tmp_path / "safe_test.json"
-#     test_file.write_text("""{
-#         "1": {
-#             "title": "Safe Test", 
-#             "due_date": "2099-12-31",
-#             "description": ""
-#         }
-#     }""")
-    
-#     # 2. Action
-#     model = TodoModel(test_file)
-    
-#     # 3. Verify
-#     assert len(model.todos) == 1  # Should pass if basic loading works
-#     assert model.todos["1"].title == "Safe Test"
 
 def test_load_single_valid_todo(tmp_path):
     test_file = tmp_path / "test.json"
@@ -256,9 +165,6 @@ def test_model_with_custom_filepath(tmp_path):
     assert model.todos == {}
 
 
-###  new test
-
-# Add to tests/test_model.py
 def test_todo_with_empty_description():
     """Test Todo allows empty description"""
     from datetime import date
