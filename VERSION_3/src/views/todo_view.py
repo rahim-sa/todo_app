@@ -8,7 +8,6 @@ from datetime import date
 from typing import Optional, Dict, Any
 from src.models.todo_model import Todo
 
-
 class TodoView:
     @staticmethod
     def show_menu() -> None:
@@ -82,8 +81,6 @@ class TodoView:
         #Display success messages"""
         print(f"Success: {message}")
 
-    
-     
     @staticmethod
     def get_todo_input() -> Dict:
         title = input("Title: ").strip()
