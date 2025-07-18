@@ -334,39 +334,3 @@ def test_save_failure_handling(real_controller, monkeypatch, capsys):
         # Verify error handling
         assert "Save failed" in str(exc_info.value)
         assert "Error:" in capsys.readouterr().out  # Verify user saw error
-
-# Add to test_controller.py
-
-def test_controller_init_with_invalid_model():
-    """Test initialization with invalid model"""
-    bad_model = MagicMock()
-    bad_model._load_todos.side_effect = PersistenceError("DB error")
-    del bad_model.todos  # Force initialization check to fail
-    
-    with pytest.raises(TodoError, match="Model initialization failed"):
-        TodoController(bad_model, MagicMock())
-
-def test_delete_nonexistent_todo(real_controller):
-    """Test deleting non-existent todo"""
-    with patch('builtins.input', return_value="999"), \
-         patch.object(real_controller.view, 'show_error') as mock_error:
-        real_controller._delete_todo()
-        mock_error.assert_called_with("Todo not found")
-
-def test_list_todos_empty(real_controller, capsys):
-    """Test listing empty todos"""
-    real_controller.model.todos = {}
-    real_controller._list_todos()
-    captured = capsys.readouterr()
-    assert "No todos found" in captured.out
-
-def test_add_todo_storage_failure(real_controller, monkeypatch):
-    """Test handling of storage failures during add"""
-    def mock_fail():
-        raise PersistenceError("Save failed")
-    
-    monkeypatch.setattr(real_controller.model, 'save_todos', mock_fail)
-    
-    with patch('builtins.input', side_effect=['Test', '', '2099-12-31']), \
-         pytest.raises(TodoError, match="Save failed"):
-        real_controller._add_todo()

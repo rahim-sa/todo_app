@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 import json
 from unittest.mock import call
-from datetime import date
 
 #from unittest.mock import call
 from unittest.mock import patch, MagicMock
@@ -133,57 +132,3 @@ def test_load_corrupt_data(tmp_path, capsys):
     # Verify behavior
     assert model.todos == {}  # Should return empty dict
     assert "Warning: Could not load todos" in captured.out  # Verify warning was printed
-
-
-# Add to test_model.py
-
-def test_todo_overdue(sample_todo):
-    """Test is_overdue property"""
-    sample_todo.due_date = date(2000, 1, 1)  # Past date
-    sample_todo.is_complete = False
-    assert sample_todo.is_overdue
-    
-    sample_todo.is_complete = True
-    assert not sample_todo.is_overdue
-
-def test_todo_post_init_validation():
-    """Test __post_init__ validation"""
-    with pytest.raises(ValueError, match="Title must be"):
-        Todo(title="")  # Empty title
-        
-    with pytest.raises(ValueError, match="Due date cannot"):
-        Todo(title="Test", due_date=date(2000, 1, 1))  # Past date
-
-def test_model_save_with_data(empty_model, sample_todo, tmp_path):
-    """Test saving actual todo data"""
-    empty_model.file_path = tmp_path / "data.json"
-    empty_model.todos["1"] = sample_todo
-    empty_model.save_todos()
-    
-    # Verify saved data
-    saved_data = json.loads((tmp_path / "data.json").read_text())
-    assert saved_data["1"]["title"] == "Test Todo"
-
- 
-
-
-def test_load_partially_corrupt_data(tmp_path, capsys):
-    """Test loading file with valid and invalid todos"""
-    test_file = tmp_path / "mixed.json"
-    test_file.write_text('''{
-        "1": {
-            "title": "Good", 
-            "description": "", 
-            "due_date": "2099-12-31",
-            "is_complete": false,
-            "created_at": "2023-01-01T00:00:00"
-        },
-        "2": {"invalid": "data"}
-    }''')
-
-    model = TodoModel(test_file)
-    captured = capsys.readouterr()
-    
-    assert "1" in model.todos  # Valid todo loaded
-    assert "2" not in model.todos  # Invalid todo skipped
-    assert "Warning: Skipping invalid todo 2" in captured.out

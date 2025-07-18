@@ -51,6 +51,7 @@ class TodoModel:
         self.todos: Dict[str, Todo] = self._load_todos()
 
     def _load_todos(self) -> Dict[str, Todo]:
+        # Load todos from JSON file or return empty dict if not found
         try:
             if not self.file_path.exists():
                 return {}
@@ -60,20 +61,16 @@ class TodoModel:
                 todos = {}
                 for k, v in data.items():
                     try:
-                        # Skip if required fields are missing
-                        if not all(key in v for key in ['title', 'due_date', 'created_at']):
-                            raise ValueError("Missing required fields")
-                            
-                        # Convert string dates
+                        # Convert string dates back to date/datetime objects
                         v['due_date'] = date.fromisoformat(v['due_date'])
                         v['created_at'] = datetime.fromisoformat(v['created_at'])
-                        v['updated_at'] = datetime.fromisoformat(v['updated_at']) if v.get('updated_at') else None
+                        if v['updated_at']:
+                            v['updated_at'] = datetime.fromisoformat(v['updated_at'])
                         todos[k] = Todo(**v)
-                    except (ValueError, KeyError, TypeError) as e:
+                    except (ValueError, KeyError) as e:
                         print(f"Warning: Skipping invalid todo {k}: {e}")
-                        continue
                 return todos
-        except (json.JSONDecodeError, FileNotFoundError) as e:
+        except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Warning: Could not load todos: {e}")
             return {}
 
