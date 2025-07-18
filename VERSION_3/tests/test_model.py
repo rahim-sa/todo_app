@@ -246,3 +246,11 @@ def test_save_empty_todos(tmp_path):
     model = TodoModel(tmp_path / "empty.json")
     model.save_todos()  # Should not crash
     assert Path(tmp_path / "empty.json").exists()
+
+
+def test_model_with_custom_filepath(tmp_path):
+    """Test model works with custom file path"""
+    test_file = tmp_path / "custom.json"
+    model = TodoModel(test_file)
+    assert model.file_path == test_file
+    assert model.todos == {}

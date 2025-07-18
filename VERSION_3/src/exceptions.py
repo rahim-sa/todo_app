@@ -13,3 +13,7 @@ class PersistenceError(TodoError):
 class NotFoundError(TodoError):
     """Raised when a todo is not found"""
     pass
+
+class PersistenceError(Exception):
+    """For storage-related errors"""
+    pass

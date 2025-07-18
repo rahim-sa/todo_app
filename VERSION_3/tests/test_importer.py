@@ -2,6 +2,7 @@ import pytest
 from pathlib import Path
 from datetime import date
 from src.utils.importer import import_from_json
+from src.exceptions import PersistenceError
 
 @pytest.fixture
 def sample_json_file(tmp_path):
