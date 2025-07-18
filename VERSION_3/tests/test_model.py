@@ -9,6 +9,7 @@ from unittest.mock import patch, MagicMock
 from pathlib import Path 
 #from unittest.mock import patch, MagicMock
 import logging
+#from datetime import date
  
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -132,3 +133,20 @@ def test_load_corrupt_data(tmp_path, capsys):
     # Verify behavior
     assert model.todos == {}  # Should return empty dict
     assert "Warning: Could not load todos" in captured.out  # Verify warning was printed
+
+
+# def test_save_todos(tmp_path, sample_todo):  
+#     model = TodoModel(tmp_path / "test.json")  
+#     model.todos = {"1": sample_todo}  
+#     model.save_todos()  
+#     assert (tmp_path / "test.json").exists()  
+
+# def test_load_corrupt_data(tmp_path):  
+#     bad_file = tmp_path / "bad.json"  
+#     bad_file.write_text("{invalid_json}")  
+#     model = TodoModel(bad_file)  
+#     assert model.todos == {}  # Should recover gracefully  
+
+# def test_todo_with_empty_description():  
+#     todo = Todo(title="Valid", description="", due_date=date(2099, 1, 1))  
+#     assert todo.description == ""  # Should allow empty desc  
