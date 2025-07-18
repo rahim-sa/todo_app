@@ -9,7 +9,8 @@ from unittest.mock import patch, MagicMock
 from pathlib import Path 
 #from unittest.mock import patch, MagicMock
 import logging
-from datetime import date
+#from datetime import date
+from datetime import date, datetime, timedelta
  
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -176,3 +177,72 @@ def test_model_save_empty(tmp_path):
     model = TodoModel(tmp_path / "empty.json")
     model.save_todos()  # Should not crash
     assert (tmp_path / "empty.json").exists()
+
+
+def test_load_todos_with_none_updated_at(tmp_path):
+    """Test loading todos where updated_at is None"""
+    test_file = tmp_path / "test.json"
+    test_file.write_text("""{
+        "1": {
+            "title": "Test",
+            "due_date": "2099-12-31",
+            "description": "",
+            "created_at": "2023-01-01T00:00:00",
+            "updated_at": null,
+            "is_complete": false
+        }
+    }""")
+    model = TodoModel(test_file)
+    assert model.todos["1"].updated_at is None
+
+def test_save_todos_permission_error(tmp_path, monkeypatch):
+    """Test save_todos handles permission errors"""
+    def mock_open(*args, **kwargs):
+        raise PermissionError("No write permission")
+    
+    monkeypatch.setattr("builtins.open", mock_open)
+    model = TodoModel(tmp_path / "test.json")
+    model.todos["1"] = Todo(title="Test", due_date=date(2099,1,1))
+    model.save_todos()  # Should not raise, just print error
+
+def test_todo_validation_errors():
+    """Test Todo validation rejects bad inputs"""
+    with pytest.raises(ValueError):
+        Todo(title="", due_date=date(2099,1,1))  # Empty title
+        
+    with pytest.raises(ValueError):
+        Todo(title=123, due_date=date(2099,1,1))  # Non-string title
+        
+    with pytest.raises(ValueError):
+        Todo(title="Test", due_date=date(2020,1,1))  # Past due date
+
+def test_is_overdue_property():
+    """Test is_overdue property calculation"""
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    tomorrow = today + timedelta(days=1)
+    
+    # These will pass validation because due_date is today
+    todo1 = Todo(title="Due today", due_date=today)
+    todo2 = Todo(title="Done today", due_date=today, is_complete=True)
+    todo3 = Todo(title="Due tomorrow", due_date=tomorrow)
+    
+    # Manually adjust dates after creation
+    todo1.due_date = yesterday
+    assert todo1.is_overdue
+    
+    todo2.due_date = yesterday
+    assert not todo2.is_overdue
+    
+    assert not todo3.is_overdue
+
+def test_non_ascii_characters(tmp_path):
+    """Test handling of non-ASCII characters"""
+    model = TodoModel(tmp_path / "test.json")
+    model.todos["1"] = Todo(title="日本語", description="áéíóú", due_date=date(2099,1,1))
+    model.save_todos()
+    
+    # Verify roundtrip
+    model2 = TodoModel(tmp_path / "test.json")
+    assert model2.todos["1"].title == "日本語"
+

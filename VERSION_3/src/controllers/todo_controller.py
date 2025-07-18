@@ -11,23 +11,13 @@ from typing import Optional
 import logging
 from datetime import datetime
 from src.exceptions import PersistenceError 
-
-# Fallback exception class  
+ 
 class TodoError(Exception):
     # Base exception for todo-related errors"""
     pass
 
 class TodoController:
-    # Initialize with model and view components
-    #def __init__(self, model: TodoModel, view: TodoView):
-       # self.model = model  # Data operations (storage/retrieval)
-       # self.view = view  # User interface rendering
-       # logging.basicConfig(
-           # filename='todo_app.log',
-          #  level=logging.ERROR,
-          #  format='%(asctime)s - %(levelname)s - %(message)s'
-       # )
-
+     
     def __init__(self, model: TodoModel, view: TodoView):
         """
         Initialize controller with proper error handling.
@@ -79,9 +69,6 @@ class TodoController:
             self.view.show_error("An unexpected error occurred")
             logging.critical(f"Unexpected error: {str(e)}", exc_info=True)
 
-    # Create new todo from user input
-     
-
     
     def _add_todo(self):
         try:
@@ -100,57 +87,75 @@ class TodoController:
             self.view.show_error("An unexpected error occurred")
             logging.error(error_msg)
             raise TodoError(error_msg) from e
-    
-    
-    
-    
-    
 
-    # Completes the selected todo 
-    #def _complete_todo(self) -> None:
-      #  try:
-       #     todo_id = self.view.get_todo_id()
-         #   if todo_id in self.model.todos:
-          #      self.model.todos[todo_id].is_complete = True
-          #      self.model.todos[todo_id].updated_at = datetime.now()
-          #      self.view.show_success(f"Todo {todo_id} marked as complete")
-           # else:
-          #      self.view.show_error("Todo not found")
-       # except ValueError as e:
-           # self.view.show_error(str(e))
-        #except Exception as e:
-            #self.view.show_error("Failed to complete todo")
-           # logging.error(f"Complete todo error: {str(e)}", exc_info=True)
+    # def _complete_todo(self) -> None:
+    #     try:
+    #         todo_id = self.view.get_todo_id()
+    #         if todo_id in self.model.todos:
+    #             self.model.todos[todo_id].is_complete = True
+    #             self.model.todos[todo_id].updated_at = datetime.now()
+    #             self.view.show_success(f"Todo {todo_id} marked as complete")
+    #         else:
+    #             raise ValueError("Todo not found")  # Add this line
+    #     except ValueError as e:
+    #         self.view.show_error(str(e))
+    #         raise  # Re-raise after showing
+    #     except Exception as e:
+    #         self.view.show_error("Failed to complete todo")
+    #         logging.error(f"Complete todo error: {str(e)}", exc_info=True)
 
     def _complete_todo(self) -> None:
         try:
             todo_id = self.view.get_todo_id()
             if todo_id in self.model.todos:
-                self.model.todos[todo_id].is_complete = True
+                self.model.todos[todo_id].is_complete = True  # This may raise
                 self.model.todos[todo_id].updated_at = datetime.now()
+                self.model.save_todos()  # Add this to test persistence
                 self.view.show_success(f"Todo {todo_id} marked as complete")
             else:
-                raise ValueError("Todo not found")  # Add this line
+                raise ValueError("Todo not found")
         except ValueError as e:
             self.view.show_error(str(e))
-            raise  # Re-raise after showing
-        except Exception as e:
+            raise
+        except Exception as e:  # This will now catch property set errors
             self.view.show_error("Failed to complete todo")
             logging.error(f"Complete todo error: {str(e)}", exc_info=True)
+            raise  # Add this to propagate the exception
 
     # Delete selected todo from list
+    # def _delete_todo(self):
+    #     try:
+    #         todo_id = self.view.get_todo_id()
+    #         if todo_id in self.model.todos:
+    #             del self.model.todos[todo_id]
+    #             self.model.save_todos()   
+    #             self.view.show_success(f"Todo {todo_id} deleted")
+    #         else:
+    #             self.view.show_error("Todo not found")
+    #     except Exception as e:
+    #         self.view.show_error(f"Delete failed: {str(e)}")
+    #         logging.error(f"Delete error: {str(e)}")
+
     def _delete_todo(self):
         try:
             todo_id = self.view.get_todo_id()
             if todo_id in self.model.todos:
                 del self.model.todos[todo_id]
-                self.model.save_todos()   
+                self.model.save_todos()  # This may raise PersistenceError   
                 self.view.show_success(f"Todo {todo_id} deleted")
             else:
-                self.view.show_error("Todo not found")
+                raise ValueError("Todo not found")
+        except ValueError as e:
+            self.view.show_error(str(e))
+            raise
+        except PersistenceError as e:
+            self.view.show_error(f"Delete failed: {str(e)}")
+            logging.error(f"Delete error: {str(e)}")
+            raise  # Re-raise after handling
         except Exception as e:
             self.view.show_error(f"Delete failed: {str(e)}")
             logging.error(f"Delete error: {str(e)}")
+            raise TodoError(str(e)) from e
 
     # Shows the list of available todos
     def _list_todos(self) -> None:
