@@ -10,6 +10,7 @@ from src.views.todo_view import TodoView
 from typing import Optional
 import logging
 from datetime import datetime
+from src.exceptions import PersistenceError 
 
 # Fallback exception class  
 class TodoError(Exception):
@@ -18,14 +19,38 @@ class TodoError(Exception):
 
 class TodoController:
     # Initialize with model and view components
+    #def __init__(self, model: TodoModel, view: TodoView):
+       # self.model = model  # Data operations (storage/retrieval)
+       # self.view = view  # User interface rendering
+       # logging.basicConfig(
+           # filename='todo_app.log',
+          #  level=logging.ERROR,
+          #  format='%(asctime)s - %(levelname)s - %(message)s'
+       # )
+
     def __init__(self, model: TodoModel, view: TodoView):
-        self.model = model  # Data operations (storage/retrieval)
-        self.view = view  # User interface rendering
+        """
+        Initialize controller with proper error handling.
+        Now explicitly checks model initialization.
+        """
+        self.model = model
+        self.view = view
+        
+        # Configure logging (keep your existing config)
         logging.basicConfig(
             filename='todo_app.log',
             level=logging.ERROR,
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
+        
+        # Force initialization check
+        try:
+            if not hasattr(model, '_load_todos'):
+                raise PersistenceError("Model not properly initialized")
+            if not hasattr(model, 'todos'):
+                model.todos = model._load_todos()
+        except PersistenceError as e:
+            raise TodoError(f"Model initialization failed: {str(e)}") from e
 
     def run(self) -> None:
         try:
