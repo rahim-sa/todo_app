@@ -9,7 +9,7 @@ from unittest.mock import patch, MagicMock
 from pathlib import Path 
 #from unittest.mock import patch, MagicMock
 import logging
-#from datetime import date
+from datetime import date
  
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -150,3 +150,86 @@ def test_load_corrupt_data(tmp_path, capsys):
 # def test_todo_with_empty_description():  
 #     todo = Todo(title="Valid", description="", due_date=date(2099, 1, 1))  
 #     assert todo.description == ""  # Should allow empty desc  
+
+
+
+# Add to existing tests
+# def test_save_todos_with_special_chars(tmp_path):
+#     """Test saving todos with special characters"""
+#     model = TodoModel(tmp_path / "special.json")
+#     model.todos = {
+#         "1": Todo(title="Task & Stuff", description="Line\nBreak", due_date=date(2099,1,1))
+#     }
+#     model.save_todos()
+    
+#     # Verify roundtrip
+#     new_model = TodoModel(tmp_path / "special.json")
+#     assert new_model.todos["1"].title == "Task & Stuff"
+#     assert new_model.todos["1"].description == "Line\nBreak"
+
+# def test_load_todos_with_invalid_entries(tmp_path, capsys):
+#     """Test loading with some invalid entries"""
+#     test_file = tmp_path / "mixed.json"
+#     test_file.write_text("""{
+#         "1": {"title": "Valid", "due_date": "2099-01-01"},
+#         "2": {"title": 123, "due_date": "2099-01-01"},
+#         "3": {"title": "Valid2", "due_date": "invalid-date"}
+#     }""")
+    
+#     model = TodoModel(test_file)
+#     assert len(model.todos) == 1  # Only valid entry loaded
+#     assert "Skipping invalid todo" in capsys.readouterr().out
+
+# def test_load_single_valid_todo(tmp_path):
+#     """Simplest possible load test - won't break anything"""
+#     # 1. Setup
+#     test_file = tmp_path / "safe_test.json"
+#     test_file.write_text("""{
+#         "1": {
+#             "title": "Safe Test", 
+#             "due_date": "2099-12-31",
+#             "description": ""
+#         }
+#     }""")
+    
+#     # 2. Action
+#     model = TodoModel(test_file)
+    
+#     # 3. Verify
+#     assert len(model.todos) == 1  # Should pass if basic loading works
+#     assert model.todos["1"].title == "Safe Test"
+
+def test_load_single_valid_todo(tmp_path):
+    test_file = tmp_path / "test.json"
+    # Ensure all required fields are present
+    test_file.write_text("""{
+        "1": {
+            "title": "Safe Test",
+            "due_date": "2099-12-31",
+            "description": "",
+            "created_at": "2023-01-01T00:00:00",
+            "updated_at": null,
+            "is_complete": false
+        }
+    }""")
+    model = TodoModel(test_file)
+    assert len(model.todos) == 1
+    assert model.todos["1"].title == "Safe Test"
+
+
+
+def test_load_invalid_data(tmp_path):
+    bad_file = tmp_path / "invalid.json"
+    bad_file.write_text("""{
+        "1": {"title": 123, "due_date": "2099-01-01"}
+    }""")  # Invalid title (number)
+    model = TodoModel(bad_file)
+    assert model.todos == {}
+
+def test_load_corrupt_data(tmp_path):
+    bad_file = tmp_path / "corrupt.json"
+    bad_file.write_text("""{
+        "1": {"title": "Test", "due_date": "not-a-date"}
+    }""")  # Invalid date format
+    model = TodoModel(bad_file)
+    assert model.todos == {}

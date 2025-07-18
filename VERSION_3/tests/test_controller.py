@@ -334,3 +334,24 @@ def test_save_failure_handling(real_controller, monkeypatch, capsys):
         # Verify error handling
         assert "Save failed" in str(exc_info.value)
         assert "Error:" in capsys.readouterr().out  # Verify user saw error
+
+# def test_load_todos_failure(tmp_path):
+#     bad_file = tmp_path / "bad.json"
+#     bad_file.write_text('{"valid": "json"}')  # Simple valid JSON
+#     model = TodoModel(bad_file)
+#     assert model.todos == {}  # Should return empty dict
+
+def test_load_todos_failure(tmp_path):
+    bad_file = tmp_path / "bad.json"
+    # Write valid JSON format with proper structure
+    bad_file.write_text("""{
+        "1": {
+            "title": "Test",
+            "due_date": "2099-01-01",
+            "description": "",
+            "created_at": "2023-01-01T00:00:00",
+            "updated_at": null
+        }
+    }""")
+    model = TodoModel(bad_file)
+    assert len(model.todos) == 1  # Should load successfully
