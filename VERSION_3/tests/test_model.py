@@ -233,3 +233,16 @@ def test_load_corrupt_data(tmp_path):
     }""")  # Invalid date format
     model = TodoModel(bad_file)
     assert model.todos == {}
+
+
+def test_model_init_with_nonexistent_file(tmp_path):
+    """Test initialization with non-existent file"""
+    non_existent = tmp_path / "nonexistent.json"
+    model = TodoModel(non_existent)
+    assert model.todos == {}  # Should return empty dict without errors
+
+def test_save_empty_todos(tmp_path):
+    """Test saving empty todo list"""
+    model = TodoModel(tmp_path / "empty.json")
+    model.save_todos()  # Should not crash
+    assert Path(tmp_path / "empty.json").exists()
