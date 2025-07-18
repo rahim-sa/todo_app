@@ -264,3 +264,18 @@ def test_model_save_failure(tmp_path, capsys):
         model.save_todos()
     assert "ERROR saving todos" in capsys.readouterr().out
 
+
+def test_model_error_handling(tmp_path, capsys):
+    """Test error handling during file operations"""
+    # Test corrupt file loading
+    bad_file = tmp_path / "bad.json"
+    bad_file.write_text("{invalid}")
+    model = TodoModel(bad_file)
+    assert "Warning: Could not load todos" in capsys.readouterr().out
+    
+    # Test save failure
+    model.todos = {"1": MagicMock(spec=Todo)}
+    with patch('builtins.open', side_effect=PermissionError("No access")):
+        model.save_todos()
+    assert "ERROR saving todos" in capsys.readouterr().out
+

@@ -251,3 +251,22 @@ def test_get_todo_id(mock_input):
                 TodoView.get_todo_id()
         else:
             assert TodoView.get_todo_id() == expected
+
+
+def test_get_todo_id_validation():
+    """Test ID input validation"""
+    with patch('builtins.input') as mock_input:
+        # Test valid input
+        mock_input.return_value = "1"
+        assert TodoView.get_todo_id() == "1"
+        
+        # Test empty input
+        mock_input.return_value = ""
+        with pytest.raises(ValueError):
+            TodoView.get_todo_id()
+
+def test_show_success(capsys):
+    """Test success message display"""
+    TodoView.show_success("Operation succeeded")
+    captured = capsys.readouterr()
+    assert "Success: Operation succeeded" in captured.out

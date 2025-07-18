@@ -379,3 +379,43 @@ def test_complete_todo_edge_cases(real_controller):
     with patch('builtins.input', return_value="invalid"):
         with pytest.raises(ValueError):
             real_controller._complete_todo()
+
+
+
+def test_add_todo_error_handling(real_controller):
+    """Test error paths in todo addition"""
+    with patch('builtins.input', side_effect=['', '', '']):  # Empty title
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+    
+    with patch.object(real_controller.model, 'save_todos', side_effect=Exception("DB error")):
+        with pytest.raises(TodoError):
+            real_controller._add_todo()
+
+# def test_controller_init_failure():
+#     """Test initialization error handling"""
+#     # Create a truly broken model that will fail initialization
+#     class BrokenModel:
+#         pass
+    
+#     broken_model = BrokenModel()
+    
+#     # Test with both the model check and load failure
+#     with pytest.raises(TodoError) as exc_info:
+#         TodoController(broken_model, MagicMock())
+    
+#     # Verify the error message contains what we expect
+#     assert "Model initialization failed" in str(exc_info.value)
+
+def test_controller_init_failure():
+    """Test initialization error handling"""
+    # Create model missing required attributes
+    broken_model = MagicMock()
+    del broken_model._load_todos  # Remove critical method
+    del broken_model.todos  # Remove required attribute
+    
+    with pytest.raises(TodoError) as exc_info:
+        TodoController(broken_model, MagicMock())
+    
+    # Verify the error contains the expected message
+    assert "Model not properly initialized" in str(exc_info.value)
