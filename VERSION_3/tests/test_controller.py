@@ -355,3 +355,27 @@ def test_run_unexpected_error(real_controller):
         
         real_controller.run()
         mock_add.assert_called_once()
+
+
+# Add these tests:
+# def test_controller_init_with_broken_model():
+#     """Test initialization with invalid model"""
+#     broken_model = MagicMock()
+#     del broken_model.todos  # Make it fail initialization check
+#     with pytest.raises(TodoError):
+#         TodoController(broken_model, MagicMock())
+
+def test_add_todo_logging(real_controller, caplog):
+    """Test error logging in _add_todo"""
+    caplog.set_level(logging.ERROR)
+    with patch('builtins.input', side_effect=['', '', '']):  # Invalid input
+        with pytest.raises(ValueError):
+            real_controller._add_todo()
+    assert "Title cannot be empty" in caplog.text
+
+def test_complete_todo_edge_cases(real_controller):
+    """Test error paths in _complete_todo"""
+    # Test invalid ID
+    with patch('builtins.input', return_value="invalid"):
+        with pytest.raises(ValueError):
+            real_controller._complete_todo()

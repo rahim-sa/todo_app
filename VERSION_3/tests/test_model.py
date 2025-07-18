@@ -246,3 +246,21 @@ def test_non_ascii_characters(tmp_path):
     model2 = TodoModel(tmp_path / "test.json")
     assert model2.todos["1"].title == "日本語"
 
+
+# Add these tests:
+def test_persistence_error_fallback(monkeypatch):
+    """Test fallback PersistenceError when import fails"""
+    monkeypatch.delattr('src.exceptions.PersistenceError')
+    from importlib import reload
+    import src.models.todo_model
+    reload(src.models.todo_model)
+    assert hasattr(src.models.todo_model, 'PersistenceError')
+
+def test_model_save_failure(tmp_path, capsys):
+    """Test error handling during save"""
+    model = TodoModel(tmp_path / "test.json")
+    model.todos = {"1": MagicMock(spec=Todo)}
+    with patch('builtins.open', side_effect=PermissionError):
+        model.save_todos()
+    assert "ERROR saving todos" in capsys.readouterr().out
+
