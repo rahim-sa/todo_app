@@ -1,4 +1,4 @@
-# version_2/src/models/todo_model.py
+# version_3/src/models/todo_model.py
 """
 Data model: Handles storage and business logic.
 Uses JSON for persistence.
@@ -51,7 +51,6 @@ class TodoModel:
         self.todos: Dict[str, Todo] = self._load_todos()
 
     def _load_todos(self) -> Dict[str, Todo]:
-        # Load todos from JSON file or return empty dict if not found
         try:
             if not self.file_path.exists():
                 return {}
@@ -61,18 +60,23 @@ class TodoModel:
                 todos = {}
                 for k, v in data.items():
                     try:
-                        # Convert string dates back to date/datetime objects
+                        # Keep original date/datetime handling
                         v['due_date'] = date.fromisoformat(v['due_date'])
                         v['created_at'] = datetime.fromisoformat(v['created_at'])
                         if v['updated_at']:
                             v['updated_at'] = datetime.fromisoformat(v['updated_at'])
+                        
+                        # Add your safety check
+                        v.setdefault('description', '')
+                        
                         todos[k] = Todo(**v)
                     except (ValueError, KeyError) as e:
-                        print(f"Warning: Skipping invalid todo {k}: {e}")
+                        print(f"Warning: Skipping invalid todo {k}: {e}")  # Keep warnings
                 return todos
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Warning: Could not load todos: {e}")
             return {}
+
 
     def save_todos(self):
         # Save todos to JSON with atomic write
@@ -99,32 +103,4 @@ class TodoModel:
         # Get all completed todos (read-only property)
         return [t for t in self.todos.values() if t.is_complete]
     
-
  
-def _load_todos(self) -> Dict[str, Todo]:
-    try:
-        if not self.file_path.exists():
-            return {}
-            
-        with open(self.file_path) as f:
-            data = json.load(f)
-            todos = {}
-            for k, v in data.items():
-                try:
-                    # Skip invalid entries but keep loading others
-                    v['due_date'] = date.fromisoformat(v['due_date'])
-                    v['created_at'] = datetime.fromisoformat(v['created_at'])
-                    if v['updated_at']:
-                        v['updated_at'] = datetime.fromisoformat(v['updated_at'])
-                    todos[k] = Todo(**v)
-                except (ValueError, KeyError) as e:
-                    print(f"Warning: Skipping invalid todo {k}: {e}")
-                    continue
-            return todos
-    except Exception as e:
-        raise PersistenceError(f"Failed to load todos: {str(e)}")
-    
-def __init__(self, file_path: str = "todos.json"):
-    self.file_path = file_path
-    print(f"DEBUG: Saving to {os.path.abspath(self.file_path)}")   
-    self.todos = self._load_todos()

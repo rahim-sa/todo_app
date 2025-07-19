@@ -1,4 +1,4 @@
-# version_2/src/views/todo_view.py
+# version_3/src/views/todo_view.py
 """
 View: Handles all user input/output.
 Separates UI concerns from business logic.
@@ -7,7 +7,6 @@ Separates UI concerns from business logic.
 from datetime import date
 from typing import Optional, Dict, Any
 from src.models.todo_model import Todo
-
 
 class TodoView:
     @staticmethod
@@ -82,8 +81,6 @@ class TodoView:
         #Display success messages"""
         print(f"Success: {message}")
 
-    
-     
     @staticmethod
     def get_todo_input() -> Dict:
         title = input("Title: ").strip()

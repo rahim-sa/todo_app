@@ -146,3 +146,29 @@ Traceback (most recent call last):
   File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 101, in get_todo_input
     raise ValueError("Invalid date format. Use YYYY-MM-DD")
 ValueError: Invalid date format. Use YYYY-MM-DD
+2025-07-18 16:06:45,350 - ERROR - List todos error: 'str' object has no attribute 'strftime'
+Traceback (most recent call last):
+  File "D:\dev\maktab\todo_app\version_3\src\controllers\todo_controller.py", line 158, in _list_todos
+    self.view.show_todos(self.model.todos)
+  File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 65, in show_todos
+    print(f"   Created: {todo.created_at.strftime('%Y-%m-%d %H:%M')}")
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'strftime'
+2025-07-18 16:11:29,022 - ERROR - Invalid date format. Use YYYY-MM-DD
+2025-07-18 16:11:29,022 - CRITICAL - Unexpected error: Invalid date format. Use YYYY-MM-DD
+Traceback (most recent call last):
+  File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 99, in get_todo_input
+    raise ValueError("Due date cannot be in the past")
+ValueError: Due date cannot be in the past
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\maktab\todo_app\version_3\src\controllers\todo_controller.py", line 63, in run
+    self._add_todo()
+  File "D:\dev\maktab\todo_app\version_3\src\controllers\todo_controller.py", line 88, in _add_todo
+    data = self.view.get_todo_input()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\maktab\todo_app\version_3\src\views\todo_view.py", line 101, in get_todo_input
+    raise ValueError("Invalid date format. Use YYYY-MM-DD")
+ValueError: Invalid date format. Use YYYY-MM-DD

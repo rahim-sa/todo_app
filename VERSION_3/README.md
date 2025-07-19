@@ -1,51 +1,53 @@
-# Todo App (CLI Version)
+# Todo App with Full Test Coverage
 
-## Features
-- ✅ Add tasks with titles, descriptions, due dates
-- ✔️ Mark tasks as complete
-- 🗑️ Delete tasks
-- 📋 List all tasks with status
+## Test Architecture
 
-## Quick Start
-1. Install Python 3.8+
-2. Run:
-   ```bash
-   python todo_app_v2.py
-
-    Use menu:
-    text
-
-    1. Add Todo
-    2. Complete Todo 
-    3. Delete Todo
-    4. List Todos
-    5. Exit
-
-Data Storage
-
-    Tasks save automatically to data/todos.json
-
-    Format:
-    json
-
-    {
-      "1": {
-        "title": "Buy milk",
-        "is_complete": false,
-        "due_date": "2023-12-01"
-      }
-    }
-
+├── tests/
+│ ├── test_controller.py # 42 tests (90% coverage)
+│ ├── test_exporter.py # 5 tests (100%)
+│ ├── test_history.py # 5 tests (100%)
+│ ├── test_importer.py # 4 tests (100%)
+│ ├── test_integration.py # 1 E2E test
+│ ├── test_model.py # 21 tests (97%)
+│ └── test_view.py # 6 tests (82%)
+└── coverage/ # 92% total
 text
 
 
-Key documentation principles applied:
-1. **Code Comments**:
-   - Explain the *why* not just the *what*
-   - Focus on data flow
-   - Highlight key technical decisions
+### Running Tests
 
-2. **README**:
-   - Feature icons for quick scanning
-   - Minimal setup instructions
-   - Clear example of data format
+**Basic test suite:**
+```bash
+pytest -v tests/
+
+With coverage report:
+bash
+
+pytest --cov=src --cov-report=html tests/
+open htmlcov/index.html
+
+Key Test Patterns
+
+    Mocking:
+
+        Filesystem operations
+
+        User inputs
+
+        Model-view interactions
+
+    Fixtures:
+
+        sample_todo: Standard todo item
+
+        empty_model: Fresh model instance
+
+        real_controller: Full integrated controller
+
+    Verification:
+    python
+
+# Example assertion patterns
+assert "1" in model.todos
+assert "Error" in capsys.readouterr().out
+mock_error.assert_called_once_with("Invalid choice")
