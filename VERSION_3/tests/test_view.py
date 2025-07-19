@@ -1,18 +1,14 @@
 import pytest
 from unittest.mock import patch
 from datetime import date
-
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-#sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
 from src.controllers.todo_controller import TodoController
 
-from src.views.todo_view import TodoView
 
 def test_show_menu(capsys):
     TodoView.show_menu()
@@ -30,7 +26,6 @@ def test_get_todo_input_invalid(mock_input):
         TodoView.get_todo_input()
 
  
-
 @patch('builtins.input')
 def test_get_todo_id(mock_input):
     """Test ID input validation"""
@@ -54,3 +49,4 @@ def test_show_success(capsys):
     TodoView.show_success("Test success message")
     captured = capsys.readouterr()
     assert "Success: Test success message" in captured.out
+

@@ -1,6 +1,4 @@
-# import json
-# from typing import List
-
+ 
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -18,13 +16,6 @@ def export_to_csv(todos: dict, file_path: Path) -> None:
         for id, todo in todos.items():
             writer.writerow([id, todo.title, todo.due_date.isoformat()])
 
-# def export_to_json(todos: dict, file_path):
-#     try:
-#         with open(file_path, 'w') as f:
-#             json.dump(...)  # Your existing code
-#     except (PermissionError, IOError) as e:
-#         raise PersistenceError(f"Export failed: {str(e)}") from e
-    
 
 def export_to_json(todos: dict, file_path: Path) -> None:
     """Export todos to JSON file with proper error handling"""

@@ -2,18 +2,14 @@ import pytest
 from datetime import date
 from pathlib import Path
 import sys
+from unittest.mock import call
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.models.todo_model import Todo, TodoModel
-
 from src.views.todo_view import TodoView  # Add this
 from src.controllers.todo_controller import TodoController
 
-#sys.path.append(str(Path(__file__).parent.parent))
-
-from src.views.todo_view import TodoView
-from src.models.todo_model import TodoModel
-from src.controllers.todo_controller import TodoController
 
 @pytest.fixture
 def sample_todo():

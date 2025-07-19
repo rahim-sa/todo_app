@@ -280,19 +280,6 @@ def test_add_todo_storage_failure(real_controller, monkeypatch):
         with pytest.raises(TodoError):
             real_controller._add_todo()
 
-# def test_complete_todo_unexpected_error(real_controller, monkeypatch):
-#     """Test unexpected error during completion"""
-#     # Create a mock that will raise an exception when is_complete is set
-#     mock_todo = MagicMock()
-#     def raise_error(value):
-#         raise Exception("Simulated error")
-#     mock_todo.is_complete = property(fset=raise_error)
-    
-#     real_controller.model.todos = {"1": mock_todo}
-    
-#     with patch('builtins.input', return_value="1"):
-#         with pytest.raises(Exception, match="Simulated error"):
-#             real_controller._complete_todo()
 
 def test_complete_todo_unexpected_error(real_controller, monkeypatch):
     """Test unexpected error during completion"""
@@ -313,9 +300,6 @@ def test_complete_todo_unexpected_error(real_controller, monkeypatch):
             real_controller._complete_todo()
         assert "Simulated error" in str(exc_info.value)
 
-# def test_delete_todo_storage_failure(real_controller, monkeypatch):
-#     """Test storage failure during deletion"""
-#     real_controller.model.todos = {"1": MagicMock()}
 
 def test_delete_todo_storage_failure(real_controller, monkeypatch):
     """Test storage failure during deletion"""
@@ -357,14 +341,6 @@ def test_run_unexpected_error(real_controller):
         mock_add.assert_called_once()
 
 
-# Add these tests:
-# def test_controller_init_with_broken_model():
-#     """Test initialization with invalid model"""
-#     broken_model = MagicMock()
-#     del broken_model.todos  # Make it fail initialization check
-#     with pytest.raises(TodoError):
-#         TodoController(broken_model, MagicMock())
-
 def test_add_todo_logging(real_controller, caplog):
     """Test error logging in _add_todo"""
     caplog.set_level(logging.ERROR)
@@ -392,20 +368,6 @@ def test_add_todo_error_handling(real_controller):
         with pytest.raises(TodoError):
             real_controller._add_todo()
 
-# def test_controller_init_failure():
-#     """Test initialization error handling"""
-#     # Create a truly broken model that will fail initialization
-#     class BrokenModel:
-#         pass
-    
-#     broken_model = BrokenModel()
-    
-#     # Test with both the model check and load failure
-#     with pytest.raises(TodoError) as exc_info:
-#         TodoController(broken_model, MagicMock())
-    
-#     # Verify the error message contains what we expect
-#     assert "Model initialization failed" in str(exc_info.value)
 
 def test_controller_init_failure():
     """Test initialization error handling"""
@@ -419,3 +381,4 @@ def test_controller_init_failure():
     
     # Verify the error contains the expected message
     assert "Model not properly initialized" in str(exc_info.value)
+

@@ -3,27 +3,19 @@ import sys
 from pathlib import Path
 import json
 from unittest.mock import call
-
-#from unittest.mock import call
 from unittest.mock import patch, MagicMock
-from pathlib import Path 
-#from unittest.mock import patch, MagicMock
 import logging
-#from datetime import date
 from datetime import date, datetime, timedelta
  
-
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-#sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.models.todo_model import Todo
 from src.exceptions import PersistenceError
 
 from src.views.todo_view import TodoView
 from src.models.todo_model import TodoModel
-from src.controllers.todo_controller import TodoController
-from unittest.mock import MagicMock   
-from src.exceptions import PersistenceError
+from src.controllers.todo_controller import TodoController   
+
 
 def test_todo_creation(sample_todo):
     assert sample_todo.title == "Test Todo"
