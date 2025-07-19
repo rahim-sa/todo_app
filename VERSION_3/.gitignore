@@ -3,3 +3,4 @@ __pycache__/
 .git/
 *.tmp
 data/todos.json  # Exclude local dev data
+todos.json
