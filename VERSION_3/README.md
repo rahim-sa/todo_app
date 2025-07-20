@@ -51,3 +51,24 @@ Key Test Patterns
 assert "1" in model.todos
 assert "Error" in capsys.readouterr().out
 mock_error.assert_called_once_with("Invalid choice")
+
+
+## Docker Setup
+
+This project is Docker-ready with two build targets:
+
+1. **Main Application**:
+   ```bash
+   docker build -t todo-app .
+   docker run -it --rm todo-app
+   ```
+
+2. **Tests**:
+   ```bash
+   docker build -t todo-tester --target builder .
+   docker run -it --rm todo-tester
+   ```
+
+**Requirements**:
+- Docker installed
+- Python 3.11+
